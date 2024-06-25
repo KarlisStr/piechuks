@@ -40,9 +40,9 @@
                         Kategorija
                     </button>
                     <div class="dropdown-menu" aria-labelledby="button1Dropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
+                        @foreach($kategorijas as $kategorija)
+                            <a class="dropdown-item" href="#">{{ $kategorija }}</a>
+                        @endforeach
                     </div>
                 </div>
                 <div class="btn-group">
@@ -83,10 +83,13 @@
     <div id="sludinajumu_sekcija" class="container">
       <div class="row">
         <div class="col">
-          <div id="sludinajumu_items" class="list-group">
-            <a href="#" class="list-group-item">Item 1</a>
-            <a href="#" class="list-group-item">Item 2</a>
-           </div>
+            <ul id="pakalpojumi" class="list-group">
+                @foreach($pakalpojumi as $pakalpojums)
+                    <li class="list-group-item">
+                        {{ $pakalpojums->apraksts }} - {{ $pakalpojums->cena }}
+                    </li>
+                @endforeach
+            </ul>
         </div>
           <div class="col border">
                 <div id="main_logs" href="#" class="content-container">
