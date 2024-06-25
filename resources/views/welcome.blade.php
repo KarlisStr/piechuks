@@ -23,7 +23,7 @@
               <a class="nav-link text-success fs-5 text fw-bold" href="#">Mani pakalpojumi</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link text-success fs-5 text fw-bold" href="#">Reģistrēties</a>
+              <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('register') }}">Reģistrēties</a>
             </li>
           </ul>
         </div>
