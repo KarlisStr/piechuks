@@ -35,6 +35,6 @@ class RegisterController extends Controller
     
         Log::info('User created:', $user->toArray());
     
-        return redirect()->route('home')->with('success', 'Registration successful!');
+        return redirect()->route('  home')->with('success', 'Registration successful!');
     }
 }
