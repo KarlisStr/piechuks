@@ -24,7 +24,7 @@ header{
      }
  }
 
- @media (max-width: 650px) {
+ @media (max-width: 1000px) {
     #carouselExampleControls img {
         width: 500px;
         height: 100px;
@@ -100,4 +100,8 @@ header{
 .carousel-item img{
     width: 700px;
     height: 200px;
+}
+
+.form-group{
+    padding-top: 20px;
 }

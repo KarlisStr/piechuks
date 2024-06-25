@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Piecukslv</title><link rel="stylesheet" href="{{ asset('css/custom.css') }}?v={{ time() }}">
+    <title>Piecukslv</title><link rel="stylesheet" href="{{ asset('css/custom_pieteikties.css') }}?v={{ time() }}">
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
   </head>
@@ -30,64 +30,11 @@
       </div>
     </nav>
     <header class="text-center">
-        <h4 class="text-success">Kad pat tavi draugi saka, ka Tev vajag profesionālu palīdzību!</h1>
+        <h4 class="text-success">Pieteikties!</h1>
     </header>
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <div class="btn-group">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="button1Dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Kategorija
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="button1Dropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="button1Dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Lokācija
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="button1Dropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-                <div class="btn-group">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="button1Dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Cena
-                    </button>
-                    <div class="dropdown-menu" aria-labelledby="button1Dropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-auto ml-auto">
-                <div class="btn-group">
-                    <button class="btn btn-light dropdown-toggle" type="button" id="button1Dropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        Kārtot pēc: 
-                    </button>
-                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="button2Dropdown">
-                        <a class="dropdown-item" href="#">Action</a>
-                        <a class="dropdown-item" href="#">Another action</a>
-                        <a class="dropdown-item" href="#">Something else here</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <div id="sludinajumu_sekcija" class="container">
       <div class="row">
-        <div class="col">
-          <div id="sludinajumu_items" class="list-group">
-            <a href="#" class="list-group-item">Item 1</a>
-            <a href="#" class="list-group-item">Item 2</a>
-           </div>
-        </div>
           <div class="col border">
                 <div id="main_logs" href="#" class="content-container">
                     <div id="main_logs_user"class = "container">
@@ -117,12 +64,6 @@
                               <span class="carousel-control-next-icon" aria-hidden="true"></span>
                             </a>
                           </div>
-                          <div class="d-flex justify-content-between">
-                            <form action="{{ route('pieteikties') }}" method="GET">
-                              <button type="submit" class="btn btn-success">Pieteikties</button>
-                            </form>
-                            <button type="button" class="btn btn-success">Saglabāt</button>
-                          </div>
                         </div>
                         <div class="col">
                           <h2>Title</h2>
@@ -135,6 +76,19 @@
                         </div>
                     </div>
               </div>
+          </div>
+        </div>
+        <div class="col">
+          <div id="input_virsraksts" class="list-group">
+            <input class="form-control form-control-lg" type="text" placeholder="Ievadiet virsrakstu">
+          </div>
+          <div class="form-group">
+            <textarea class="form-control form-control-lg" id="largeTextarea" rows="10" placeholder="Ievadiet tekstu"></textarea>
+          </div> 
+          <div id = "pieteikties" class="d-flex flex-row-reverse">
+            <form action="{{ route('pieteikties') }}" method="GET">
+              <button type="submit" class="btn btn-success">Pieteikties</button>
+            </form>
           </div>
         </div>
       </div>
