@@ -6,6 +6,11 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+Route::get('/pieteikties', function () {
+    return view('pieteikties');
+})->name('pieteikties');
+
 use App\Http\Controllers\Auth\RegisterController;
 
 // Route for registration page
