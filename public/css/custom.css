@@ -1,0 +1,63 @@
+header{
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+@media (max-width: 650px) {
+    header h4 {
+       font-size: 13px;  
+        
+    }
+}
+
+@media (max-width: 650px) {
+   #button1Dropdown {
+        font-size: 10px; /* Adjust the font size as needed */
+        padding: 5px 10px  !important; /* Adjust the padding as needed */
+    }
+}
+
+
+#sludinajumi .col {
+    padding-top: 20px;
+}
+
+#lists li button{
+    width: 100%;
+    border-radius: 0px;
+    text-decoration: none;
+
+}
+#lists li button img{
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+}
+#sludinajumu_sekcija{
+    padding-top: 20px;
+}
+#main_logs{
+    border-color: rgb(173, 172, 172);
+}
+
+#main_logs_user{
+    padding:20px;
+    display: flex;
+    justify-content: inline;
+}
+#main_logs_user img{
+    height: 50px;
+    width: 50px;
+}
+#main_logs_user a  {
+    text-decoration: none;
+    color: black;
+}
+#main_logs_user a p {
+    padding-left: 10px;
+    padding-top: 10px;
+}
+
+#sludinajumu_items{
+    border-radius: 0px;
+}
