@@ -23,6 +23,7 @@ class RegisterController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
+            'is_professional' => 'nullable|accepted', // Validate the checkbox (optional and accepted)
         ]);
     
         Log::info('Validated data:', $validated);
@@ -31,6 +32,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'is_professional' => $request->has('is_professional'), // Store the checkbox value
         ]);
     
         Log::info('User created:', $user->toArray());
