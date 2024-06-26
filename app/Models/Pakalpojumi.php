@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,28 +9,27 @@ class Pakalpojumi extends Model
 {
     use HasFactory;
 
-    protected $primaryKey = 'pakalpojuma_id';
-    public $incrementing = true;
     protected $table = 'pakalpojumi';
+    protected $primaryKey = 'pakalpojuma_id';
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'pakalpojuma_id',
-        'apraksts',
-        'kategorijas_nosaukums',
-        'cena',
-        'lokacijas_id',
-        'profesionalis_id',
+        'pakalpojuma_id', 'apraksts', 'cena', 'kategorijas_nosaukums', 'lokacijas_id', 'profesionalis_id'
     ];
 
-    // Define the relationship with the Profesionali model
-    public function profesionalis()
-    {
-        return $this->belongsTo(Profesionali::class, 'profesionalis_id', 'profesionalis_id');
-    }
-
-    // Define the relationship with the Lokacijas model
     public function lokacija()
     {
-        return $this->belongsTo(Lokacijas::class, 'lokacijas_id', 'lokacijas_id');
+        return $this->belongsTo(Lokacijas::class, 'lokacijas_id');
+    }
+
+    public function profesionali()
+    {
+        return $this->belongsTo(Profesionali::class, 'profesionalis_id');
+    }
+
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }

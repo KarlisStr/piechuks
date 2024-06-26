@@ -31,3 +31,15 @@ use App\Http\Controllers\HomeController;
 
 Route::get('/home', [HomeController::class, 'index'])->name('home');
 
+use App\Http\Controllers\ServiceController;
+
+Route::get('/service-details/{id}', [ServiceController::class, 'serviceDetails']);
+
+
+
+use App\Http\Controllers\ProfesionalisController;
+
+Route::get('/profesionalis-home', [ProfesionalisController::class, 'index'])->name('profesionalis.home');
+Route::get('/profesionalis-home/pakalpojumi', [ProfesionalisController::class, 'pakalpojumi'])->name('profesionalis.pakalpojumi');
+Route::get('/profesionalis-home/pieteikumi', [ProfesionalisController::class, 'pieteikumi'])->name('profesionalis.pieteikumi');
+Route::post('/profesionalis-home/pakalpojumi/add', [ProfesionalisController::class, 'addPakalpojums'])->name('profesionalis.pakalpojumi.add');

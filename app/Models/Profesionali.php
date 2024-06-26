@@ -8,33 +8,28 @@ use Illuminate\Database\Eloquent\Model;
 class Profesionali extends Model
 {
     use HasFactory;
-    
-    protected $table = 'profesionali';
 
+    protected $table = 'profesionali';
     protected $primaryKey = 'profesionalis_id';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'profesionalis_id',
-        'vards_uzvards',
-        'epasts',
-        'telefons',
-        'bankas_konts',
-        'statuss',
-        'user_id',
-        'admin_id',
+        'profesionalis_id', 'vards_uzvards', 'epasts', 'telefons', 'bankas_konts', 'statuss', 'user_id', 'admin_id'
     ];
 
-    // Define the relationship with the User model
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    // Define the relationship with the Admin model
-    public function admin()
+    public function pakalpojumi()
     {
-        return $this->belongsTo(Admin::class, 'admin_id', 'admin_id');
+        return $this->hasMany(Pakalpojumi::class, 'profesionalis_id');
+    }
+
+    public function profileImage()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }

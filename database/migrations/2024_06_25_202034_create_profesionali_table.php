@@ -12,13 +12,13 @@ class CreateProfesionaliTable extends Migration
             $table->string('profesionalis_id', 12)->primary();
             $table->string('vards_uzvards', 50);
             $table->string('epasts', 50);
-            $table->string('telefons', 50);
-            $table->string('bankas_konts', 50);
+            $table->string('telefons', 50)->nullable();
+            $table->string('bankas_konts', 50)->nullable();
             $table->integer('statuss');
             $table->unsignedBigInteger('user_id');
             $table->string('admin_id', 12)->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('admin_id')->references('admin_id')->on('admins')->onDelete('set null');
+            $table->foreign('admin_id')->references('admin_id')->on('admin')->onDelete('set null');
             $table->timestamps();
         });
     }

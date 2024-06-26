@@ -16,7 +16,7 @@ class PakalpojumiSeeder extends Seeder
             'kategorijas_nosaukums' => 'Home Services',
             'cena' => '50 EUR',
             'lokacijas_id' => 1, // Assume lokacijas_id 1 exists
-            'profesionalis_id' => 'p1',
+            'profesionalis_id' => '2',
         ]);
 
         Pakalpojumi::create([
@@ -25,7 +25,7 @@ class PakalpojumiSeeder extends Seeder
             'kategorijas_nosaukums' => 'Home Services',
             'cena' => '60 EUR',
             'lokacijas_id' => 2, // Assume lokacijas_id 2 exists
-            'profesionalis_id' => 'p2',
+            'profesionalis_id' => '1',
         ]);
 
         Pakalpojumi::create([
@@ -34,7 +34,7 @@ class PakalpojumiSeeder extends Seeder
             'kategorijas_nosaukums' => 'Home Services',
             'cena' => '40 EUR',
             'lokacijas_id' => 3, // Assume lokacijas_id 3 exists
-            'profesionalis_id' => 'p3',
+            'profesionalis_id' => '3',
         ]);
     }
 }

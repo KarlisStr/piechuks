@@ -7,19 +7,18 @@ use Illuminate\Database\Eloquent\Model;
 class Lokacijas extends Model
 {
     use HasFactory;
+
     protected $table = 'lokacijas';
     protected $primaryKey = 'lokacijas_id';
-    public $incrementing = true;
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
-        'lokacijas_id',
-        'adrese',
-        'apraksts',
+        'lokacijas_id', 'adrese', 'apraksts'
     ];
 
-    // Define the relationship with the Pakalpojumi model
     public function pakalpojumi()
     {
-        return $this->hasMany(Pakalpojumi::class, 'lokacijas_id', 'lokacijas_id');
+        return $this->hasMany(Pakalpojumi::class, 'lokacija_id');
     }
 }

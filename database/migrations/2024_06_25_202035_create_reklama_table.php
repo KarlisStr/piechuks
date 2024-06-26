@@ -15,7 +15,7 @@ class CreateReklamaTable extends Migration
             $table->string('imagepath', 100);
             $table->string('telefons', 50);
             $table->string('admin_id', 12)->nullable();
-            $table->foreign('admin_id')->references('admin_id')->on('admins')->onDelete('set null');
+            $table->foreign('admin_id')->references('admin_id')->on('admin')->onDelete('set null');
             $table->timestamps();
         });
     }

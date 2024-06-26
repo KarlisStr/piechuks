@@ -19,7 +19,7 @@ class CreateChatsTable extends Migration
             $table->foreign('admin_id_user1')->references('admin_id')->on('admins')->onDelete('set null');
             $table->foreign('klienti_id_user1')->references('klients_id')->on('klienti')->onDelete('set null');
             $table->foreign('profesionalis_id_user1')->references('profesionalis_id')->on('profesionali')->onDelete('set null');
-            $table->foreign('admin_id_user2')->references('admin_id')->on('admins')->onDelete('set null');
+            $table->foreign('admin_id_user2')->references('admin_id')->on('admin')->onDelete('set null');
             $table->foreign('klienti_id_user2')->references('klients_id')->on('klienti')->onDelete('set null');
             $table->foreign('profesionalis_id_user2')->references('profesionalis_id')->on('profesionali')->onDelete('set null');
             $table->timestamps();

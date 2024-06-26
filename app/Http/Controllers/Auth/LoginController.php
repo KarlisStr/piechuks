@@ -8,11 +8,6 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    // Method to show the login form (optional)
-    public function showLoginForm()
-    {
-        return view('auth.login');
-    }
 
     // Method to handle login form submission
     public function login(Request $request)
@@ -26,7 +21,7 @@ class LoginController extends Controller
         // Attempt to authenticate the user
         if (Auth::attempt($credentials)) {
             // Authentication passed...
-            return redirect()->intended('/'); // Redirect to a dashboard or home route
+            return redirect()->intended('/profesionalis-home'); // Redirect to a dashboard or home route
         }
 
         // Authentication failed...

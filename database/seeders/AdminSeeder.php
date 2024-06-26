@@ -16,11 +16,12 @@ class AdminSeeder extends Seeder
             'name' => 'admin',
             'email' => 'admin@example.com', // Ensure the email is unique
             'password' => Hash::make('admin'),
+            
         ]);
 
         // Create a new admin with the user_id
         Admin::create([
-            'admin_id' => 'a1', // Use a unique admin_id
+            'admin_id' => '9', // Use a unique admin_id
             'lietotajvards' => 'admin',
             'user_id' => $user->id,
         ]);

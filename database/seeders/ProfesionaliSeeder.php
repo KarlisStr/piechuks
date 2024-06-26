@@ -32,36 +32,36 @@ class ProfesionaliSeeder extends Seeder
 
         // Create profesionali records and associate them with the users
         Profesionali::create([
-            'profesionalis_id' => 'p1',
+            'profesionalis_id' => '1',
             'vards_uzvards' => 'Jānis Bērziņš',
             'epasts' => 'janis.berzins@example.com',
             'telefons' => '+371 20123456',
             'bankas_konts' => 'LV12HABA0012345678901',
             'statuss' => 8,
             'user_id' => $user1->id,
-            'admin_id' => 'a1',
+            'admin_id' => '9',
         ]);
 
         Profesionali::create([
-            'profesionalis_id' => 'p2',
+            'profesionalis_id' => '2',
             'vards_uzvards' => 'Anna Ābele',
             'epasts' => 'anna.abele@example.com',
             'telefons' => '+371 20123457',
             'bankas_konts' => 'LV12SEBZ0012345678901',
             'statuss' => 6,
             'user_id' => $user2->id,
-            'admin_id' => 'a1',
+            'admin_id' => '9',
         ]);
 
         Profesionali::create([
-            'profesionalis_id' => 'p3',
+            'profesionalis_id' => '3',
             'vards_uzvards' => 'Pēteris Ozoliņš',
             'epasts' => 'peteris.ozolins@example.com',
             'telefons' => '+371 20123458',
             'bankas_konts' => 'LV12CBBR0012345678901',
             'statuss' => 4,
             'user_id' => $user3->id,
-            'admin_id' => 'a1',
+            'admin_id' => '9',
         ]);
     }
 }

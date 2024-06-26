@@ -4,17 +4,15 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Admin extends Model
+class Klienti extends Model
 {
     use HasFactory;
-    protected $table = 'admin';
-    protected $primaryKey = 'admin_id';
+    protected $table = 'klienti';
+    protected $primaryKey = 'klients_id';
     public $incrementing = false;
     protected $keyType = 'string';
 
     protected $fillable = [
-        'admin_id',
-        'lietotajvards',
-        'user_id',
+        'klients_id', 'vards_uzvards', 'epasts', 'telefons', 'bankas_konts', 'statuss', 'parole'
     ];
 }

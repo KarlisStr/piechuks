@@ -18,7 +18,7 @@ class CreateZinasTable extends Migration
             $table->string('sutitajs_profesionalis_id', 12)->nullable();
             $table->foreign('chat_id')->references('chat_id')->on('chats')->onDelete('set null');
             $table->foreign('sutitajs_klients_id')->references('klients_id')->on('klienti')->onDelete('set null');
-            $table->foreign('sutitajs_admin_id')->references('admin_id')->on('admins')->onDelete('set null');
+            $table->foreign('sutitajs_admin_id')->references('admin_id')->on('admin')->onDelete('set null');
             $table->foreign('sutitajs_profesionalis_id')->references('profesionalis_id')->on('profesionali')->onDelete('set null');
             $table->timestamps();
         });
@@ -29,3 +29,4 @@ class CreateZinasTable extends Migration
         Schema::dropIfExists('zinas');
     }
 }
+
