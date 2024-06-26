@@ -11,11 +11,11 @@ class Pakalpojumi extends Model
 
     protected $table = 'pakalpojumi';
     protected $primaryKey = 'pakalpojuma_id';
-    public $incrementing = false;
-    protected $keyType = 'string';
+    public $incrementing = true; // Ensure this is true if it's an auto-incrementing integer
+    protected $keyType = 'int';  // Ensure this is 'int' if it's an auto-incrementing integer
 
     protected $fillable = [
-        'pakalpojuma_id', 'apraksts', 'cena', 'kategorijas_nosaukums', 'profesionalis_id', 'nosaukums', 'adrese'
+        'apraksts', 'cena', 'kategorijas_nosaukums', 'profesionalis_id', 'nosaukums', 'adrese'
     ];
 
     public function profesionali()
@@ -27,6 +27,7 @@ class Pakalpojumi extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
     public function favorites()
     {
         return $this->hasMany(Favorite::class, 'pakalpojuma_id');

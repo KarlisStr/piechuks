@@ -1,6 +1,15 @@
 @php
 use Illuminate\Support\Str;
 @endphp
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul>
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 <!doctype html>
 <html lang="en">
 <head>
@@ -31,12 +40,6 @@ use Illuminate\Support\Str;
                         <img src="{{ Auth::user()->profileImage ? asset('storage/' . Auth::user()->profileImage->image_path) : asset('images/default-profile.png') }}" class="rounded-circle" width="30" height="30" alt="Profile Image">
                     </a>
                 </li>
-                <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-link nav-link text-success fs-5 text fw-bold">Logout</button>
-                    </form>
-                </li>
             </ul>
         </div>
     </div>
@@ -61,12 +64,11 @@ use Illuminate\Support\Str;
                     <tr data-pakalpojuma-id="{{ $pakalpojums->pakalpojuma_id }}">
                         <td>{{ Str::limit($pakalpojums->apraksts, 50) }}</td>
                         <td>{{ $pakalpojums->kategorijas_nosaukums }}</td>
-                        <td>{{ $pakalpojums->adrese }}</td>
+                        <td>{{ optional($pakalpojums->lokacija)->adrese }}</td>
                         <td class="text-end">{{ $pakalpojums->cena }}</td>
                     </tr>
                 @endforeach
                 </tbody>
-
             </table>
             <div class="d-flex flex-row-reverse">
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPakalpojumsModal">Pievienot jaunu pakalpojumu</button>
@@ -125,8 +127,9 @@ use Illuminate\Support\Str;
         </div>
     </div>
 </div>
-
+    
 <script>
+
     document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('.table tbody tr');
         rows.forEach(row => {
@@ -139,26 +142,6 @@ use Illuminate\Support\Str;
         if (rows.length > 0) {
             rows[0].click(); // Automatically click the first row to load its details
         }
-
-        const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
-
-        const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
-            v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
-        )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
-
-        document.querySelectorAll('th.sortable').forEach(th => th.addEventListener('click', function() {
-            const table = th.closest('table');
-            Array.from(table.querySelectorAll('tbody > tr'))
-                .sort(comparer(Array.from(th.parentNode.children).indexOf(th), this.asc = !this.asc))
-                .forEach(tr => table.querySelector('tbody').appendChild(tr));
-
-            table.querySelectorAll('th.sortable').forEach(th => {
-                th.classList.remove('sorted-asc', 'sorted-desc');
-            });
-
-            th.classList.toggle('sorted-asc', this.asc);
-            th.classList.toggle('sorted-desc', !this.asc);
-        }));
     });
 
     function fetchServiceDetails(pakalpojumaId) {
@@ -166,33 +149,18 @@ use Illuminate\Support\Str;
             .then(response => response.json())
             .then(data => {
                 document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
-            })
-            .catch(error => console.error('Error fetching service details:', error));
+            });
     }
 
     function renderServiceDetails(data) {
-        const images = data.images.map(image => `<div class="carousel-item"><img class="d-block w-100" src="${image.url}" alt="Service Image"></div>`).join('');
         return `
             <div class="service-details">
                 <h2>${data.title}</h2>
-                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-                    <div class="carousel-inner">
-                        <div class="carousel-item active">
-                            <img class="d-block w-100" src="${data.images.length ? data.images[0].url : 'public/images/default-profile.png'}" alt="Service Image">
-                        </div>
-                        ${images}
-                    </div>
-                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    </a>
-                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    </a>
-                </div>
+                <img src="${data.image || 'images/default-profile.png'}" alt="Service Image" class="service-image">
                 <p>${data.description}</p>
-                <div class="profesionali-details">
-                    <img src="${data.professional.profileImage}" alt="Profile Image" class="profile-image" width="100" height="100">
-                    <p>${data.professional.name}</p>
+                <div class="profesionalis-details">
+                    <img src="${data.profesionalis.profileImage || 'images/default-profile.png'}" alt="Profile Image" class="profile-image">
+                    <p>${data.profesionalis.name}</p>
                 </div>
                 <div class="action-buttons">
                     <button type="button" class="btn btn-success">Pieteikties</button>
@@ -202,9 +170,6 @@ use Illuminate\Support\Str;
         `;
     }
 </script>
-<script src="{{ asset('js/custom.js') }}?v={{ time() }}"></script>
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
