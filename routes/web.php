@@ -32,7 +32,7 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 // Database data fetching
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Service details route
+
 Route::get('/service-details/{id}', [ServiceController::class, 'serviceDetails']);
 
 // Profesionalis routes, ensure these routes are protected by authentication

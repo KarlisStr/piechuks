@@ -4,21 +4,25 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pakalpojumi;
-use App\Models\Lokacijas;
 use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
     public function index()
     {
-        // Fetch all pakalpojumi with related lokacijas
-        $pakalpojumi = Pakalpojumi::with('lokacija')->get();
+        // Fetch all pakalpojumi
+        $pakalpojumi = Pakalpojumi::all();
 
         // Get unique kategorijas nosaukums
         $kategorijas = Pakalpojumi::select('kategorijas_nosaukums')->distinct()->pluck('kategorijas_nosaukums');
 
-        // Get unique cities from lokacijas
-        $pilsetas = Lokacijas::select('pilseta')->distinct()->pluck('pilseta');
+        // 'adrese' data looks like this: street name, house number, city
+        // Get unique cities (last word of adrese column)
+        $adreses = Pakalpojumi::select('adrese')->distinct()->pluck('adrese');
+        $pilsetas = $adreses->map(function ($adrese) {
+            $parts = explode(',', $adrese);
+            return trim(end($parts));
+        })->unique();
 
         // Check if the user is authenticated and redirect to the appropriate home page
         if (Auth::check()) {

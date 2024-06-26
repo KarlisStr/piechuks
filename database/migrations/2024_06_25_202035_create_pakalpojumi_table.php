@@ -13,11 +13,9 @@ class CreatePakalpojumiTable extends Migration
             $table->string('apraksts', 200);
             $table->string('nosaukums', 50);
             $table->string('kategorijas_nosaukums', 50);
-            //$table->string('adrese');
+            $table->string('adrese');
             $table->float('cena', 8, 2);
-            $table->unsignedInteger('lokacijas_id')->nullable();
             $table->string('profesionalis_id', 12)->nullable();
-            $table->foreign('lokacijas_id')->references('lokacijas_id')->on('lokacijas')->onDelete('set null');
             $table->foreign('profesionalis_id')->references('profesionalis_id')->on('profesionali')->onDelete('set null');
             $table->timestamps();
         });

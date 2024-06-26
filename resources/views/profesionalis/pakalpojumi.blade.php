@@ -55,7 +55,7 @@ use Illuminate\Support\Str;
                     <tr>
                         <td>{{ Str::limit($pakalpojums->apraksts, 50) }}</td>
                         <td>{{ $pakalpojums->kategorijas_nosaukums }}</td>
-                        <td>{{ optional($pakalpojums->lokacija)->adrese }}</td>
+                        <td>{{ $pakalpojums->adrese }}</td>
                         <td class="text-end">{{ $pakalpojums->cena }}</td>
                     </tr>
                 @endforeach
@@ -71,6 +71,7 @@ use Illuminate\Support\Str;
     </div>
 </div>
 
+<!-- Add Pakalpojums Modal -->
 <!-- Add Pakalpojums Modal -->
 <div class="modal fade" id="addPakalpojumsModal" tabindex="-1" aria-labelledby="addPakalpojumsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -118,7 +119,7 @@ use Illuminate\Support\Str;
         </div>
     </div>
 </div>
-    
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('.table tbody tr');

@@ -44,7 +44,7 @@ use Illuminate\Support\Str;
                         <tr>
                             <th scope="col"><span class="sortable" data-sort="apraksts">Apraksts</span></th>
                             <th scope="col"><span class="sortable" data-sort="kategorijas_nosaukums">Kategorija</span></th>
-                            <th scope="col"><span class="sortable" data-sort="lokacija">Lokācija</span></th>
+                            <th scope="col"><span class="sortable" data-sort="lokacija">Adrese</span></th>
                             <th scope="col"><span class="sortable" data-sort="cena">Cena</span></th>
                         </tr>
                     </thead>
@@ -53,7 +53,7 @@ use Illuminate\Support\Str;
                         <tr data-pakalpojuma-id="{{ $pakalpojums->pakalpojuma_id }}">
                             <td>{{ Str::limit($pakalpojums->apraksts, 50) }}</td>
                             <td>{{ $pakalpojums->kategorijas_nosaukums }}</td>
-                            <td>{{ optional($pakalpojums->lokacija)->adrese }}</td>
+                            <td>{{ $pakalpojums->adrese }}</td>
                             <td class="text-end">{{ $pakalpojums->cena }}</td>
                         </tr>
                         @endforeach

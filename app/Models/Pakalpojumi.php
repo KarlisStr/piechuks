@@ -15,7 +15,7 @@ class Pakalpojumi extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'pakalpojuma_id', 'apraksts', 'cena', 'kategorijas_nosaukums', 'adrese', 'profesionalis_id', 'nosaukums'
+        'pakalpojuma_id', 'apraksts', 'cena', 'kategorijas_nosaukums', 'profesionalis_id', 'nosaukums', 'adrese'
     ];
 
     public function profesionali()

@@ -80,7 +80,7 @@ use Illuminate\Support\Str;
                         <tr data-pakalpojuma-id="{{ $pakalpojums->pakalpojuma_id }}">
                             <td>{{ Str::limit($pakalpojums->apraksts, 50) }}</td>
                             <td>{{ $pakalpojums->kategorijas_nosaukums }}</td>
-                            <td>{{ optional($pakalpojums->lokacija)->adrese }}</td>
+                            <td>{{ $pakalpojums->adrese }}</td>
                             <td class="text-end">{{ $pakalpojums->cena }}</td>
                         </tr>
                     @endforeach
@@ -96,56 +96,113 @@ use Illuminate\Support\Str;
 </div>
 
 <!-- Filter Modal -->
-<div class="modal fade" id="filterModal" tabindex="-1" aria-labelledby="filterModalLabel" aria-hidden="true">
+<div class="modal fade" id="addPakalpojumsModal" tabindex="-1" aria-labelledby="addPakalpojumsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form id="filterForm">
+            <form method="POST" action="{{ route('profesionalis.pakalpojumi.add') }}" enctype="multipart/form-data">
+                @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="filterModalLabel">Filtrēt Meklēšanu</h5>
+                    <h5 class="modal-title" id="addPakalpojumsModalLabel">Pievienot jaunu pakalpojumu</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" id="savedServices" name="savedServices">
-                        <label class="form-check-label" for="savedServices">Saglabātie Pakalpojumi</label>
+                    <div class="mb-3">
+                        <label for="nosaukums" class="form-label">Nosaukums</label>
+                        <input type="text" class="form-control" id="nosaukums" name="nosaukums" required>
                     </div>
                     <div class="mb-3">
-                        <label for="priceMin" class="form-label">Cena</label>
-                        <div class="d-flex">
-                            <input type="number" class="form-control" id="priceMin" name="priceMin" placeholder="Min">
-                            <input type="number" class="form-control ms-2" id="priceMax" name="priceMax" placeholder="Max">
-                        </div>
+                        <label for="apraksts" class="form-label">Apraksts</label>
+                        <input type="text" class="form-control" id="apraksts" name="apraksts" required>
                     </div>
                     <div class="mb-3">
-                        <label for="category" class="form-label">Kategorija</label>
-                        <select class="form-select" id="category" name="category">
-                            <option value="">Visas</option>
-                            @foreach($kategorijas as $category)
-                                <option value="{{ $category }}">{{ $category }}</option>
-                            @endforeach
+                        <label for="kategorijas_nosaukums" class="form-label">Kategorija</label>
+                        <select class="form-select" id="kategorijas_nosaukums" name="kategorijas_nosaukums" required>
+                            <option value="Mājas Pakalpojumi">Mājas Pakalpojumi</option>
+                            <option value="IT Pakalpojumi">IT Pakalpojumi</option>
                         </select>
                     </div>
                     <div class="mb-3">
-                        <label for="city" class="form-label">Pilsēta</label>
-                        <select class="form-select" id="city" name="city">
-                            <option value="">Visas</option>
-                            <!-- Populate cities here -->
-                        </select>
+                        <label for="cena" class="form-label">Cena</label>
+                        <input type="number" step="0.01" class="form-control" id="cena" name="cena" required>
                     </div>
                     <div class="mb-3">
-                        <label for="keyword" class="form-label">Meklēt pēc atslēgvārda</label>
-                        <input type="text" class="form-control" id="keyword" name="keyword">
+                        <label for="adrese" class="form-label">Adrese</label>
+                        <input type="text" class="form-control" id="adrese" name="adrese" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Attēli</label>
+                        <input type="file" class="form-control" id="images" name="images[]" multiple>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aizvērt</button>
-                    <button type="button" class="btn btn-success" id="applyFilters">Meklēt</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-success">Save changes</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.table tbody tr');
+        rows.forEach(row => {
+            row.addEventListener('click', function(event) {
+                event.preventDefault();
+                event.stopPropagation();
+                console.log('Row clicked, fetching service details...');
+                const pakalpojumaId = this.dataset.pakalpojumaId;
+                fetchServiceDetails(pakalpojumaId);
+            });
+        });
+
+        if (rows.length > 0) {
+            rows[0].click(); // Automatically click the first row to load its details
+        }
+    });
+
+    function fetchServiceDetails(pakalpojumaId) {
+        fetch(`/service-details/${pakalpojumaId}`)
+            .then(response => response.json())
+            .then(data => {
+                console.log('Service details fetched:', data);
+                document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
+            })
+            .catch(error => console.error('Error fetching service details:', error));
+    }
+
+    function renderServiceDetails(data) {
+        const images = data.images.map(image => `<div class="carousel-item"><img class="d-block w-100" src="${image.url}" alt="Service Image"></div>`).join('');
+        return `
+            <div class="service-details">
+                <h2>${data.title}</h2>
+                <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <img class="d-block w-100" src="${data.images.length ? data.images[0].url : 'images/default-profile.png'}" alt="Service Image">
+                        </div>
+                        ${images}
+                    </div>
+                    <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                    </a>
+                    <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                    </a>
+                </div>
+                <p>${data.description}</p>
+                <div class="profesionali-details">
+                    <img src="${data.professional.profileImage}" alt="Profile Image" class="profile-image" width="100" height="100">
+                    <p>${data.professional.name}</p>
+                </div>
+                <div class="action-buttons">
+                    <button type="button" class="btn btn-success">Pieteikties</button>
+                    <button type="button" class="btn btn-secondary">Saglabāt</button>
+                </div>
+            </div>
+        `;
+    }
+</script>
 <script src="{{ asset('js/klients.js') }}?v={{ time() }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

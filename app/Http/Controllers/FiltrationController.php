@@ -40,9 +40,7 @@ class FiltrationController extends Controller
 
             if ($request->filled('city')) {
                 Log::info('Filtering by city', ['city' => $request->city]);
-                $query->whereHas('lokacija', function($query) use ($request) {
-                    $query->where('adrese', 'like', '%' . $request->city . '%');
-                });
+                $query->where('adrese', 'like', '%' . $request->city . '%');
             }
 
             if ($request->filled('keyword')) {
@@ -50,7 +48,7 @@ class FiltrationController extends Controller
                 $query->where('apraksts', 'like', '%' . $request->keyword . '%');
             }
 
-            $pakalpojumi = $query->with('lokacija')->get();
+            $pakalpojumi = $query->get();
             Log::info('Filtered pakalpojumi', ['pakalpojumi' => $pakalpojumi]);
 
             return response()->json(['pakalpojumi' => $pakalpojumi]);

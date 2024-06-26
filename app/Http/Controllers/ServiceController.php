@@ -1,14 +1,17 @@
 <?php
+
 namespace App\Http\Controllers;
 
-use App\Models\Pakalpojumi;
 use Illuminate\Http\Request;
+use App\Models\Pakalpojumi;
+use Illuminate\Support\Facades\Log;
 
 class ServiceController extends Controller
 {
     public function serviceDetails($id)
     {
-        $pakalpojums = Pakalpojumi::with(['lokacija', 'profesionali.user.profileImage', 'images'])->find($id);
+        // Fetch the service with its professional and images
+        $pakalpojums = Pakalpojumi::with(['profesionali.user.profileImage', 'images'])->find($id);
 
         if (!$pakalpojums) {
             return response()->json(['message' => 'Service not found'], 404);
@@ -20,10 +23,7 @@ class ServiceController extends Controller
             'description' => $pakalpojums->apraksts,
             'category' => $pakalpojums->kategorijas_nosaukums,
             'price' => $pakalpojums->cena,
-            'location' => [
-                'address' => $pakalpojums->lokacija ? $pakalpojums->lokacija->adrese : 'No location specified',
-                'description' => $pakalpojums->lokacija ? $pakalpojums->lokacija->apraksts : 'No location details'
-            ],
+            'address' => $pakalpojums->adrese,
             'professional' => [
                 'name' => $pakalpojums->profesionali ? $pakalpojums->profesionali->vards_uzvards : 'No professional assigned',
                 'email' => $pakalpojums->profesionali ? $pakalpojums->profesionali->epasts : 'No email provided',
