@@ -16,7 +16,7 @@ class ServiceController extends Controller
 
         return response()->json([
             'id' => $pakalpojums->pakalpojuma_id,
-            'title' => $pakalpojums->apraksts,
+            'title' => $pakalpojums->nosaukums,
             'description' => $pakalpojums->apraksts,
             'category' => $pakalpojums->kategorijas_nosaukums,
             'price' => $pakalpojums->cena,

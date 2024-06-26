@@ -49,6 +49,7 @@ class ProfesionalisController extends Controller
             'cena' => $request->cena,
             'lokacijas_id' => $request->lokacijas_id,
             'profesionalis_id' => Auth::user()->id,
+            'nosaukums' => $request->nosaukums,
         ]);
 
         return redirect()->route('profesionalis.pakalpojumi')->with('success', 'Pakalpojums added successfully!');

@@ -11,6 +11,7 @@ class CreatePakalpojumiTable extends Migration
         Schema::create('pakalpojumi', function (Blueprint $table) {
             $table->increments('pakalpojuma_id');
             $table->string('apraksts', 200);
+            $table->string('nosaukums', 50);
             $table->string('kategorijas_nosaukums', 50);
             $table->string('cena', 20);
             $table->unsignedInteger('lokacijas_id')->nullable();

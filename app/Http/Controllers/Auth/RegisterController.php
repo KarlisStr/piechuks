@@ -33,7 +33,7 @@ class RegisterController extends Controller
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'is_professional' => $request->boolean('is_professional'), // Store the checkbox value
+            'is_professional' => $request->boolean('is_professional') ? 1 : 0, // Store as integer
         ]);
 
         Log::info('User created:', $user->toArray());
@@ -68,6 +68,6 @@ class RegisterController extends Controller
             Log::info('Client created:', $client->toArray());
         }
 
-        return redirect()->route('home')->with('success', 'Registration successful!');
+        return redirect()->back()->with('success', 'Reģistrācija veiksmīga, lūdzu pieslēdzieties.')->with('email', $request->email);
     }
 }
