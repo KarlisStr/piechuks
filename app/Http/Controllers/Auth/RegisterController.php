@@ -1,73 +1,72 @@
 <?php
+
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
-use App\Models\Profesionali;
-use App\Models\Klienti;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Foundation\Auth\RegistersUsers;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
 
 class RegisterController extends Controller
 {
-    public function showRegistrationForm()
+    /*
+    |--------------------------------------------------------------------------
+    | Register Controller
+    |--------------------------------------------------------------------------
+    |
+    | This controller handles the registration of new users as well as their
+    | validation and creation. By default this controller uses a trait to
+    | provide this functionality without requiring any additional code.
+    |
+    */
+
+    use RegistersUsers;
+
+    /**
+     * Where to redirect users after registration.
+     *
+     * @var string
+     */
+    protected $redirectTo = '/home';
+
+    /**
+     * Create a new controller instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        return view('auth.register');
+        //$this->middleware('guest');
     }
 
-    public function register(Request $request)
+    /**
+     * Get a validator for an incoming registration request.
+     *
+     * @param  array  $data
+     * @return \Illuminate\Contracts\Validation\Validator
+     */
+    protected function validator(array $data)
     {
-        // Validate input data
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|min:8|confirmed',
-            'is_professional' => 'nullable|boolean', // Validate the checkbox
+        return Validator::make($data, [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
         ]);
+    }
 
-        Log::info('Validated data:', $validated);
-
-        // Create the User
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'is_professional' => $request->boolean('is_professional'), // Store the checkbox value
+    /**
+     * Create a new user instance after a valid registration.
+     *
+     * @param  array  $data
+     * @return \App\Models\User
+     */
+    protected function create(array $data)
+    {
+        return User::create([
+            'name' => $data['name'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
         ]);
-
-        Log::info('User created:', $user->toArray());
-
-        // Check if the user is registering as a professional
-        if ($request->boolean('is_professional')) {
-            // Create a Professional
-            $professional = Profesionali::create([
-                'profesionalis_id' => $user->id, // Assuming user ID is used as the professional ID
-                'vards_uzvards' => $user->name,
-                'epasts' => $user->email,
-                'telefons' => null,
-                'bankas_konts' => null,
-                'statuss' => 0,
-                'user_id' => $user->id,
-                'admin_id' => null,
-            ]);
-
-            Log::info('Professional created:', $professional->toArray());
-        } else {
-            // Create a Client
-            $client = Klienti::create([
-                'klients_id' => $user->id, // Assuming user ID is used as the client ID
-                'vards_uzvards' => $user->name,
-                'epasts' => $user->email,
-                'telefons' => null,
-                'bankas_konts' => null,
-                'statuss' => 0,
-                'user_id' => $user->id, // Assign the user ID
-            ]);
-
-            Log::info('Client created:', $client->toArray());
-        }
-
-        return redirect()->route('home')->with('success', 'Registration successful!');
     }
 }
