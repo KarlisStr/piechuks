@@ -1,4 +1,4 @@
-.@php
+@php
 use Illuminate\Support\Str;
 @endphp
 <!doctype html>
@@ -6,14 +6,14 @@ use Illuminate\Support\Str;
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Profesionalis Home</title>
+    <title>Profesionalis Pakalpojumi</title>
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}?v={{ time() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
-        <a class="navbar-brand fw-bold text-success fs-2 text" href="#">Piečuks.lv</a>
+        <a class="navbar-brand fw-bold text-success fs-2 text" href="{{ auth()->user()->is_professional ? route('profesionalis.index') : route('klients.index') }}">Piečuks.lv</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -26,14 +26,17 @@ use Illuminate\Support\Str;
                     <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('profesionalis.pakalpojumi') }}">Mani pakalpojumi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-success fs-5 text fw-bold" href="#">{{ Auth::user()->name }} <img src="{{ Auth::user()->profesionalis->profileImage->image_path ?? 'images/default-profile.png' }}" class="rounded-circle" width="30" height="30" alt="Profile Image"></a>
+                    <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('profile.show') }}">
+                        {{ Auth::user()->name }}
+                        <img src="{{ Auth::user()->profileImage ? asset('storage/' . Auth::user()->profileImage->image_path) : asset('images/default-profile.png') }}" class="rounded-circle" width="30" height="30" alt="Profile Image">
+                    </a>
                 </li>
             </ul>
         </div>
     </div>
 </nav>
 <header class="text-center">
-    <h4 class="text-success">Kad pat tavi draugi saka, ka Tev vajag profesionālu palīdzību!</h1>
+    <h4 class="text-success">Mani Pakalpojumi</h4>
 </header>
 <div class="container">
     <div class="row">
@@ -41,18 +44,18 @@ use Illuminate\Support\Str;
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col"><span class="sortable" data-sort="apraksts">Apraksts</span></th>
-                    <th scope="col"><span class="sortable" data-sort="kategorijas_nosaukums">Kategorija</span></th>
-                    <th scope="col"><span class="sortable" data-sort="lokacija">Lokācija</span></th>
-                    <th scope="col"><span class="sortable" data-sort="cena">Cena</span></th>
+                    <th scope="col">Apraksts</th>
+                    <th scope="col">Kategorija</th>
+                    <th scope="col">Lokācija</th>
+                    <th scope="col">Cena</th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach($pakalpojumi as $pakalpojums)
-                    <tr data-pakalpojuma-id="{{ $pakalpojums->pakalpojuma_id }}">
+                    <tr>
                         <td>{{ Str::limit($pakalpojums->apraksts, 50) }}</td>
                         <td>{{ $pakalpojums->kategorijas_nosaukums }}</td>
-                        <td>{{ $pakalpojums->lokacija->adrese }}</td>
+                        <td>{{ optional($pakalpojums->lokacija)->adrese }}</td>
                         <td class="text-end">{{ $pakalpojums->cena }}</td>
                     </tr>
                 @endforeach
@@ -94,7 +97,6 @@ use Illuminate\Support\Str;
                     <div class="mb-3">
                         <label for="lokacijas_id" class="form-label">Lokācija</label>
                         <select class="form-select" id="lokacijas_id" name="lokacijas_id" required>
-                            <!-- Assuming you have a list of locations -->
                             @foreach($locations as $location)
                                 <option value="{{ $location->lokacijas_id }}">{{ $location->adrese }}</option>
                             @endforeach
@@ -150,20 +152,7 @@ use Illuminate\Support\Str;
             </div>
         `;
     }
-
-    let slideIndex = 0;
-    function moveSlide(step) {
-        const slides = document.querySelectorAll('.carousel-item');
-        if (slides.length == 0) return;
-
-        slides[slideIndex].classList.remove('active');
-        slideIndex += step;
-        if (slideIndex >= slides.length) slideIndex = 0;
-        if (slideIndex < 0) slideIndex = slides.length - 1;
-        slides[slideIndex].classList.add('active');
-    }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
-

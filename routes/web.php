@@ -3,9 +3,14 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ServiceController;
 use App\Http\Controllers\ProfesionalisController;
+use App\Http\Controllers\KlientsController;
+use App\Http\Controllers\FavoritesController;
+
+
 use Illuminate\Support\Facades\Auth;
 
 // Home route
@@ -40,3 +45,18 @@ Route::middleware(['auth'])->group(function () {
 
 // Ensure you have an Auth::routes() call somewhere in your routes file to include default auth routes
 Auth::routes();
+
+use App\Http\Controllers\ProfileController;
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::post('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::post('/save-to-favorites/{id}', [FavoritesController::class, 'save'])->name('save.to.favorites');
+});
+Route::get('/klients', [KlientsController::class, 'index'])->name('klients.index');
+
+use App\Http\Controllers\FiltrationController;
+
+Route::middleware(['web'])->group(function () {
+    Route::post('/filter-services', [FiltrationController::class, 'filter'])->name('filter.services');
+});

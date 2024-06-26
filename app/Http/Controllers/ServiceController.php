@@ -6,23 +6,13 @@ use Illuminate\Http\Request;
 
 class ServiceController extends Controller
 {
-    /**
-     * Display the details of the specified service.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function serviceDetails($id)
     {
-        $pakalpojums = Pakalpojumi::with(['lokacija', 'profesionali', 'images'])->find($id);
+        $pakalpojums = Pakalpojumi::with(['lokacija', 'profesionali.user.profileImage', 'images'])->find($id);
 
         if (!$pakalpojums) {
             return response()->json(['message' => 'Service not found'], 404);
         }
-
-        $professionalImage = $pakalpojums->profesionali
-            ? $pakalpojums->profesionali->profileImage()->first()
-            : null;
 
         return response()->json([
             'id' => $pakalpojums->pakalpojuma_id,
@@ -37,10 +27,10 @@ class ServiceController extends Controller
             'professional' => [
                 'name' => $pakalpojums->profesionali ? $pakalpojums->profesionali->vards_uzvards : 'No professional assigned',
                 'email' => $pakalpojums->profesionali ? $pakalpojums->profesionali->epasts : 'No email provided',
-                'profileImage' => $professionalImage ? $professionalImage->image_path : 'images/default-profile.png',
+                'profileImage' => $pakalpojums->profesionali && $pakalpojums->profesionali->user && $pakalpojums->profesionali->user->profileImage ? asset('storage/' . $pakalpojums->profesionali->user->profileImage->image_path) : asset('images/default-profile.png'),
             ],
             'images' => $pakalpojums->images->map(function($image) {
-                return ['url' => $image->image_path];
+                return ['url' => asset('storage/' . $image->image_path)];
             })
         ]);
     }

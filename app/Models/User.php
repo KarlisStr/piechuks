@@ -44,11 +44,16 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_professional' => 'boolean',
         ];
     }
     public function profesionali()
     {
-        return $this->hasOne(Profesionali::class, 'user_id', 'id');
+        return $this->hasOne(Profesionali::class, 'user_id');
+    }
+    public function profileImage()
+    {
+        return $this->morphOne(Image::class, 'imageable');
     }
 }
 

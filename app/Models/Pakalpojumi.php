@@ -32,4 +32,8 @@ class Pakalpojumi extends Model
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'pakalpojuma_id');
+    }
 }

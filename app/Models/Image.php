@@ -9,13 +9,8 @@ class Image extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'image_path',
-        'imageable_id',
-        'imageable_type',
-    ];
+    protected $fillable = ['image_path', 'imageable_id', 'imageable_type'];
 
-    // Define the polymorphic relationship
     public function imageable()
     {
         return $this->morphTo();

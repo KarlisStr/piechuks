@@ -16,7 +16,6 @@ class CreateKlientiTable extends Migration
             $table->string('bankas_konts', 50)->nullable();
             $table->integer('statuss')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->string('profile_imagepath', 255)->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();
         });

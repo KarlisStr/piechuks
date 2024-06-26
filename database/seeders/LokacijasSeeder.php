@@ -9,23 +9,22 @@ class LokacijasSeeder extends Seeder
 {
     public function run()
     {
-        // Add locations
-        Lokacijas::create([
-            'lokacijas_id' => 1,
-            'adrese' => 'Rīgas iela 10-3, 1010 Rīga',
-            'apraksts' => '3. stāvs, dzīvoklis Nr. 10',
-        ]);
+        $locations = [
+            ['lokacijas_id' => 1, 'adrese' => 'Rīgas iela 10-3, 1010 Rīga'],
+            ['lokacijas_id' => 2, 'adrese' => 'Liepājas iela 25, 3001 Jūrmala'],
+            ['lokacijas_id' => 3, 'adrese' => 'Brīvības iela 5, 2000 Rīga'],
+        ];
 
-        Lokacijas::create([
-            'lokacijas_id' => 2,
-            'adrese' => 'Liepājas iela 25, 3001 Jūrmala',
-            'apraksts' => '1. stāvs, pagalms, 2. durvis pa labi',
-        ]);
+        foreach ($locations as $location) {
+            $parts = explode(', ', $location['adrese']);
+            $city = array_pop($parts);
 
-        Lokacijas::create([
-            'lokacijas_id' => 3,
-            'adrese' => 'Brīvības iela 5, 2000 Rīga',
-            'apraksts' => '4. stāvs, kabinets Nr. 402',
-        ]);
+            Lokacijas::create([
+                'lokacijas_id' => $location['lokacijas_id'],
+                'adrese' => $location['adrese'],
+                'apraksts' => '',
+                'pilseta' => $city,
+            ]);
+        }
     }
 }

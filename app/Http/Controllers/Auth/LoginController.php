@@ -21,10 +21,22 @@ class LoginController extends Controller
         // Attempt to authenticate the user
         if (Auth::attempt($credentials)) {
             // Authentication passed...
-            return redirect()->intended('/profesionalis'); // Redirect to a dashboard or home route
+            if (Auth::user()->is_professional) {
+                return redirect()->intended('/profesionalis'); // Redirect to professional dashboard
+            } else {
+                return redirect()->intended('/klients'); // Redirect to client dashboard
+            }
         }
 
         // Authentication failed...
         return back()->withErrors(['email' => 'Invalid credentials']); // Redirect back with error message
+    }
+    public function logout(Request $request)
+    {
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect('/'); // Redirect to the home page or login page
     }
 }

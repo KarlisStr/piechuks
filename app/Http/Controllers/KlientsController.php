@@ -7,7 +7,7 @@ use App\Models\Pakalpojumi;
 use App\Models\Lokacijas;
 use Illuminate\Support\Facades\Auth;
 
-class HomeController extends Controller
+class KlientsController extends Controller
 {
     public function index()
     {
