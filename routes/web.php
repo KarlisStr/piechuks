@@ -54,6 +54,9 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/save-to-favorites/{id}', [FavoritesController::class, 'save'])->name('save.to.favorites');
 });
 Route::get('/klients', [KlientsController::class, 'index'])->name('klients.index');
+Route::get('/klients/pieteikumi', [KlientsController::class, 'pieteikumi'])->name('klients.klients_pieteikumi');
+
+
 
 use App\Http\Controllers\FiltrationController;
 

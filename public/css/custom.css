@@ -117,3 +117,6 @@ header{
     width: 700px;
     height: 200px;
 }
+.navbar-nav .nav-item .nav-link.active {
+    color: #1a38a3 !important; /* Use !important to force the style */
+}
