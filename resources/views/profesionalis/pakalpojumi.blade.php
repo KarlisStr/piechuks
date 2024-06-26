@@ -23,7 +23,7 @@ use Illuminate\Support\Str;
                     <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('profesionalis.pieteikumi') }}">Mani pieteikumi</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('profesionalis.pakalpojumi') }}">Mani pakalpojumi</a>
+                    <a class="nav-link active text-success fs-5 text fw-bold" href="{{ route('profesionalis.pakalpojumi') }}">Mani pakalpojumi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('profile.show') }}">

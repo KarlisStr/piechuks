@@ -31,4 +31,10 @@ class KlientsController extends Controller
             return view('welcome', compact('pakalpojumi', 'kategorijas', 'pilsetas'));
         }
     }
+
+    public function pieteikumi()
+    {
+        // Logic for handling the pieteikumi route
+        return view('klients/klients_pieteikumi'); // This assumes you have a blade file named klients_pieteikumi.blade.php
+    }
 }
