@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Lokacijas extends Model
 {
@@ -16,6 +17,18 @@ class Lokacijas extends Model
     protected $fillable = [
         'lokacijas_id', 'adrese', 'apraksts'
     ];
+
+    public static function boot()
+    {
+        parent::boot();
+
+        // Automatically generate UUID for lokacijas_id if not set
+        static::creating(function ($model) {
+            if (empty($model->lokacijas_id)) {
+                $model->lokacijas_id = (string) Str::uuid();
+            }
+        });
+    }
 
     public function pakalpojumi()
     {

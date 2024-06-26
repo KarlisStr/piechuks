@@ -15,13 +15,8 @@ class Pakalpojumi extends Model
     protected $keyType = 'string';
 
     protected $fillable = [
-        'pakalpojuma_id', 'apraksts', 'cena', 'kategorijas_nosaukums', 'lokacijas_id', 'profesionalis_id', 'nosaukums'
+        'pakalpojuma_id', 'apraksts', 'cena', 'kategorijas_nosaukums', 'adrese', 'profesionalis_id', 'nosaukums'
     ];
-
-    public function lokacija()
-    {
-        return $this->belongsTo(Lokacijas::class, 'lokacijas_id');
-    }
 
     public function profesionali()
     {

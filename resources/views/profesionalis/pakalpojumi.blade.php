@@ -75,7 +75,7 @@ use Illuminate\Support\Str;
 <div class="modal fade" id="addPakalpojumsModal" tabindex="-1" aria-labelledby="addPakalpojumsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ route('profesionalis.pakalpojumi.add') }}">
+            <form method="POST" action="{{ route('profesionalis.pakalpojumi.add') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPakalpojumsModalLabel">Pievienot jaunu pakalpojumu</h5>
@@ -83,24 +83,31 @@ use Illuminate\Support\Str;
                 </div>
                 <div class="modal-body">
                     <div class="mb-3">
+                        <label for="nosaukums" class="form-label">Nosaukums</label>
+                        <input type="text" class="form-control" id="nosaukums" name="nosaukums" required>
+                    </div>
+                    <div class="mb-3">
                         <label for="apraksts" class="form-label">Apraksts</label>
                         <input type="text" class="form-control" id="apraksts" name="apraksts" required>
                     </div>
                     <div class="mb-3">
                         <label for="kategorijas_nosaukums" class="form-label">Kategorija</label>
-                        <input type="text" class="form-control" id="kategorijas_nosaukums" name="kategorijas_nosaukums" required>
+                        <select class="form-select" id="kategorijas_nosaukums" name="kategorijas_nosaukums" required>
+                            <option value="Mājas Pakalpojumi">Mājas Pakalpojumi</option>
+                            <option value="IT Pakalpojumi">IT Pakalpojumi</option>
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="cena" class="form-label">Cena</label>
-                        <input type="text" class="form-control" id="cena" name="cena" required>
+                        <input type="number" step="0.01" class="form-control" id="cena" name="cena" required>
                     </div>
                     <div class="mb-3">
-                        <label for="lokacijas_id" class="form-label">Lokācija</label>
-                        <select class="form-select" id="lokacijas_id" name="lokacijas_id" required>
-                            @foreach($locations as $location)
-                                <option value="{{ $location->lokacijas_id }}">{{ $location->adrese }}</option>
-                            @endforeach
-                        </select>
+                        <label for="adrese" class="form-label">Adrese</label>
+                        <input type="text" class="form-control" id="adrese" name="adrese" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Attēli</label>
+                        <input type="file" class="form-control" id="images" name="images[]" multiple>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -111,7 +118,7 @@ use Illuminate\Support\Str;
         </div>
     </div>
 </div>
-
+    
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('.table tbody tr');

@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Pakalpojumi;
 use App\Models\Pieteikumi;
 use App\Models\Lokacijas;
+use App\Models\Image;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ProfesionalisController extends Controller
 {
@@ -37,21 +39,41 @@ class ProfesionalisController extends Controller
     public function addPakalpojums(Request $request)
     {
         $request->validate([
+            'nosaukums' => 'required|string|max:255',
             'apraksts' => 'required|string|max:200',
-            'kategorijas_nosaukums' => 'required|string|max:50',
-            'cena' => 'required|string|max:20',
-            'lokacijas_id' => 'required|integer',
+            'kategorijas_nosaukums' => 'required|string|in:Mājas Pakalpojumi,IT Pakalpojumi',
+            'cena' => 'required|numeric|min:0',
+            'adrese' => 'required|string|max:255',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        Pakalpojumi::create([
+        // Create the service with address
+        $pakalpojums = Pakalpojumi::create([
+            'nosaukums' => $request->nosaukums,
             'apraksts' => $request->apraksts,
             'kategorijas_nosaukums' => $request->kategorijas_nosaukums,
             'cena' => $request->cena,
-            'lokacijas_id' => $request->lokacijas_id,
+            'adrese' => $request->adrese,
             'profesionalis_id' => Auth::user()->id,
-            'nosaukums' => $request->nosaukums,
         ]);
+
+        // Log the service data
+        Log::info('Service created', ['pakalpojums' => $pakalpojums]);
+
+        // Handle file uploads
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('images', 'public');
+
+                Image::create([
+                    'imageable_id' => $pakalpojums->id,
+                    'imageable_type' => Pakalpojumi::class,
+                    'image_path' => $path,
+                ]);
+            }
+        }
 
         return redirect()->route('profesionalis.pakalpojumi')->with('success', 'Pakalpojums added successfully!');
     }
 }
+
