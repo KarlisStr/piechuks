@@ -1,17 +1,18 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pakalpojumi;
 use App\Models\Pieteikumi;
-use App\Models\User;
+use App\Models\Lokacijas;
 use Illuminate\Support\Facades\Auth;
 
 class ProfesionalisController extends Controller
 {
     public function index()
     {
-        return redirect()->route('profesionalis.pieteikumi');
+        return redirect()->route('profesionalis.pakalpojumi');
     }
 
     public function pieteikumi()
@@ -28,8 +29,9 @@ class ProfesionalisController extends Controller
     {
         $profesionalisId = Auth::user()->id;
         $pakalpojumi = Pakalpojumi::where('profesionalis_id', $profesionalisId)->get();
+        $locations = Lokacijas::all();
 
-        return view('profesionalis.pakalpojumi', compact('pakalpojumi'));
+        return view('profesionalis.pakalpojumi', compact('pakalpojumi', 'locations'));
     }
 
     public function addPakalpojums(Request $request)

@@ -19,6 +19,6 @@ class Lokacijas extends Model
 
     public function pakalpojumi()
     {
-        return $this->hasMany(Pakalpojumi::class, 'lokacija_id');
+        return $this->hasMany(Pakalpojumi::class, 'lokacijas_id');
     }
 }
