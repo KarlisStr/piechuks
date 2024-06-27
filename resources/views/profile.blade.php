@@ -58,7 +58,7 @@
     </header>
     <div class="container">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <h2>Profile</h2>
                 @if (session('success'))
                     <div class="alert alert-success">

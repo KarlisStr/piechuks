@@ -14,6 +14,10 @@ span.sorted-desc::after {
 }
 
 
+.table tbody tr.selected-row td {
+    background-color: rgb(159, 159, 159) !important;
+    color: white !important;
+}
 header{
     padding-top: 20px;
     padding-bottom: 20px;
@@ -64,7 +68,6 @@ header{
         font-size: 16px;  
      }
  }
- 
 
 #sludinajumi .col {
     padding-top: 20px;

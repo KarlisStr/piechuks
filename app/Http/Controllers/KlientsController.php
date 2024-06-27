@@ -17,11 +17,12 @@ class KlientsController extends Controller
         $kategorijas = Pakalpojumi::select('kategorijas_nosaukums')->distinct()->pluck('kategorijas_nosaukums');
 
         // Get unique cities from the adrese column
-        $pilsetas = Pakalpojumi::selectRaw('SUBSTRING_INDEX(adrese, ",", -1) as city')
-            ->distinct()
-            ->pluck('city');
-
-        // Check if the user is authenticated and redirect to the appropriate home page
+        $adreses = Pakalpojumi::select('adrese')->distinct()->pluck('adrese');
+        $pilsetas = $adreses->map(function ($adrese) {
+            $parts = explode(',', $adrese);
+            return trim(end($parts));
+        })->unique();
+        
         if (Auth::check()) {
             if (Auth::user()->is_professional) {
                 return redirect()->route('profesionalis.pieteikumi');
