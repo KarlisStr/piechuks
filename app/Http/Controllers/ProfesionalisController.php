@@ -7,6 +7,12 @@ use App\Models\Pakalpojumi;
 use App\Models\Pieteikumi;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Models\Image as PakalpojumsImage;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image as InterventionImage;
+
+use Illuminate\Support\Facades\Validator;
+
 
 class ProfesionalisController extends Controller
 {
@@ -35,19 +41,34 @@ class ProfesionalisController extends Controller
 
     public function addPakalpojums(Request $request)
     {
+        // Basic validation
         $request->validate([
             'nosaukums' => 'required|string|max:255',
             'apraksts' => 'required|string|max:200',
             'kategorijas_nosaukums' => 'required|string|max:50',
             'cena' => 'required|numeric|min:0',
             'adrese' => 'required|string|max:255',
-            'images' => 'required|array',
-            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Log the request data for debugging
+        // Log request data
         Log::info('Request data:', $request->all());
 
+        // Custom image validation
+        $images = $request->file('images');
+        $allowedMimes = ['image/jpeg', 'image/png', 'image/jpg', 'image/gif', 'image/svg+xml', 'image/webp'];
+        $maxSize = 2048 * 1024; // 2MB
+
+        foreach ($images as $image) {
+            $mimeType = $image->getMimeType();
+            $size = $image->getSize();
+
+            if (!in_array($mimeType, $allowedMimes) || $size > $maxSize) {
+                Log::error('Validation failed for image:', ['image' => $image->getClientOriginalName(), 'mimeType' => $mimeType, 'size' => $size]);
+                return redirect()->back()->withErrors(['images' => 'Each image must be a file of type: jpeg, png, jpg, gif, svg and not exceed 2MB.'])->withInput();
+            }
+        }
+
+        // Create the service
         $pakalpojums = Pakalpojumi::create([
             'nosaukums' => $request->nosaukums,
             'apraksts' => $request->apraksts,
@@ -57,20 +78,21 @@ class ProfesionalisController extends Controller
             'profesionalis_id' => Auth::user()->id,
         ]);
 
-        Log::info('Service created:', $pakalpojums->toArray());
+        // Log the creation of the service
+        Log::info('Pakalpojums created:', $pakalpojums->toArray());
 
+        // Store the images
         if ($request->hasFile('images')) {
-            foreach ($request->file('images') as $index => $image) {
-                if ($image->isValid()) {
-                    Log::info('Processing image:', ['index' => $index, 'image' => $image]);
-                    $path = $image->store('images', 'public');
-                    $pakalpojums->images()->create(['image_path' => $path]);
-                    Log::info('Image uploaded:', ['path' => $path]);
-                } else {
-                    Log::error('Invalid image file:', ['index' => $index, 'image' => $image]);
-                }
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('images', 'public');
+                $pakalpojums->images()->create(['image_path' => $path]);
+                // Log each image upload
+                Log::info('Image uploaded:', ['path' => $path]);
             }
         }
+
+        // Log successful creation of service
+        Log::info('Service created successfully:', ['service' => $pakalpojums]);
 
         return redirect()->route('profesionalis.pakalpojumi')->with('success', 'Pakalpojums added successfully!');
     }
