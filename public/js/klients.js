@@ -115,9 +115,22 @@ function renderServiceDetails(data) {
             <p style="padding-top: 10px; font-weight: bold;">Par pakalpojumu:</p>
             <p>${data.description}</p>
             <div class="action-buttons">
-                <button type="button" class="btn btn-success">Pieteikties</button>
+                <button type="button" class="btn btn-success" onclick="openPieteiktiesModal(${data.id}, '${data.title}', '${data.description}', '${data.category}', '${data.address}', ${data.price})">Pieteikties</button>
                 <button type="button" class="btn btn-secondary">Saglabāt</button>
             </div>
         </div>
     `;
+}
+
+function openPieteiktiesModal(id, title, description, category, address, price) {
+    document.getElementById('pakalpojumsInfo').innerHTML = `
+        <h5>${title}</h5>
+        <p>${description}</p>
+        <p>Kategorija: ${category}</p>
+        <p>Lokācija: ${address}</p>
+        <p>Cena: ${price} €</p>
+    `;
+    document.getElementById('pakalpojuma_id').value = id;
+    const pieteiktiesModal = new bootstrap.Modal(document.getElementById('pieteiktiesModal'));
+    pieteiktiesModal.show();
 }

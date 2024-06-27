@@ -70,8 +70,8 @@ function renderServiceDetails(data) {
             <p style="padding-top: 10px; font-weight: bold;">Par pakalpojumu:</p>
             <p>${data.description}</p>
             <div class="action-buttons">
-                <button type="button" class="btn btn-success" >Pieteikties</button>
-                <button type="button" class="btn btn-secondary" >Saglabāt</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#exampleModal2" >Pieteikties</button>
+                <button type="button" class="btn btn-secondary" data-bs-toggle="modal" data-bs-target="#exampleModal2" >Saglabāt</button>
             </div>
         </div>
     `;

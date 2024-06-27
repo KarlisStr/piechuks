@@ -21,23 +21,40 @@ class ProfesionalisController extends Controller
         return redirect()->route('profesionalis.pakalpojumi');
     }
 
-    public function pieteikumi()
+    public function pieteikumi(Request $request)
     {
         $profesionalisId = Auth::user()->id;
-        $pieteikumi = Pieteikumi::whereHas('pakalpojums', function($query) use ($profesionalisId) {
+        $query = Pieteikumi::whereHas('pakalpojums', function($query) use ($profesionalisId) {
             $query->where('profesionalis_id', $profesionalisId);
-        })->get();
-
+        });
+    
+        if ($request->has('sort_by')) {
+            $sortBy = $request->input('sort_by');
+            $sortOrder = $request->input('sort_order', 'asc');
+            $query->orderBy($sortBy, $sortOrder);
+        }
+    
+        $pieteikumi = $query->paginate(10);
+    
         return view('profesionalis.pieteikumi', compact('pieteikumi'));
     }
 
-    public function pakalpojumi()
+    public function pakalpojumi(Request $request)
     {
         $profesionalisId = Auth::user()->id;
-        $pakalpojumi = Pakalpojumi::where('profesionalis_id', $profesionalisId)->get();
-
+        $query = Pakalpojumi::where('profesionalis_id', $profesionalisId);
+    
+        if ($request->has('sort_by')) {
+            $sortBy = $request->input('sort_by');
+            $sortOrder = $request->input('sort_order', 'asc');
+            $query->orderBy($sortBy, $sortOrder);
+        }
+    
+        $pakalpojumi = $query->paginate(10);
+    
         return view('profesionalis.pakalpojumi', compact('pakalpojumi'));
     }
+    
 
     public function addPakalpojums(Request $request)
     {

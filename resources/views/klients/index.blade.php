@@ -10,6 +10,7 @@ use Illuminate\Support\Str;
     <title>Klients Galvenā lapa</title>
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}?v={{ time() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
 </head>
 <body>
 
@@ -23,19 +24,13 @@ use Illuminate\Support\Str;
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item">
-                    <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('klients.klients_pieteikumi') }}">Mani pieteikumi</a>
+                    <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('klients.pieteikumi') }}">Mani pieteikumi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-success fs-5 text fw-bold" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Mani pakalpojumi</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link text-success fs-5 text fw-bold" href="{{ route('profile.show') }}">{{ Auth::user()->name }} <img src="{{ Auth::user()->profileImage ? asset('storage/' . Auth::user()->profileImage->image_path) : asset('images/default-profile.png') }}" class="rounded-circle" width="30" height="30" alt="Profile Image"></a>
-                </li>
-                <li class="nav-item">
-                    <form action="{{ route('logout') }}" method="POST">
-                        @csrf
-                        <button type="submit" class="btn btn-link nav-link text-success fs-5 text fw-bold">Logout</button>
-                    </form>
                 </li>
             </ul>
         </div>
@@ -86,6 +81,9 @@ use Illuminate\Support\Str;
                     @endforeach
                 </tbody>
             </table>
+            <div class="d-flex justify-content-center">
+                {{ $pakalpojumi->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
+            </div>
         </div>
 
         <!-- Right Column for Service Details -->
@@ -96,53 +94,40 @@ use Illuminate\Support\Str;
 </div>
 
 <!-- Filter Modal -->
-<div class="modal fade" id="addPakalpojumsModal" tabindex="-1" aria-labelledby="addPakalpojumsModalLabel" aria-hidden="true">
+<!-- todo -->
+
+<!-- Pieteikties Modal -->
+<div class="modal fade" id="pieteiktiesModal" tabindex="-1" aria-labelledby="pieteiktiesModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ route('profesionalis.pakalpojumi.add') }}" enctype="multipart/form-data">
+            <form method="POST" action="{{ route('klients.pieteikties') }}">
                 @csrf
                 <div class="modal-header">
-                    <h5 class="modal-title" id="addPakalpojumsModalLabel">Pievienot jaunu pakalpojumu</h5>
+                    <h5 class="modal-title" id="pieteiktiesModalLabel">Pieteikties</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label for="nosaukums" class="form-label">Nosaukums</label>
-                        <input type="text" class="form-control" id="nosaukums" name="nosaukums" required>
+                    <div id="pakalpojumsInfo" class="mb-3">
+                        <!-- Pakalpojuma info no js-->
                     </div>
                     <div class="mb-3">
                         <label for="apraksts" class="form-label">Apraksts</label>
-                        <input type="text" class="form-control" id="apraksts" name="apraksts" required>
+                        <textarea class="form-control" id="apraksts" name="apraksts" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="kategorijas_nosaukums" class="form-label">Kategorija</label>
-                        <select class="form-select" id="kategorijas_nosaukums" name="kategorijas_nosaukums" required>
-                            <option value="Mājas Pakalpojumi">Mājas Pakalpojumi</option>
-                            <option value="IT Pakalpojumi">IT Pakalpojumi</option>
-                        </select>
+                        <label for="laiks" class="form-label">Laiks</label>
+                        <input type="datetime-local" class="form-control" id="laiks" name="laiks" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="cena" class="form-label">Cena</label>
-                        <input type="number" step="0.01" class="form-control" id="cena" name="cena" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="adrese" class="form-label">Adrese</label>
-                        <input type="text" class="form-control" id="adrese" name="adrese" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="images" class="form-label">Attēli</label>
-                        <input type="file" class="form-control" id="images" name="images[]" multiple>
-                    </div>
+                    <input type="hidden" id="pakalpojuma_id" name="pakalpojuma_id">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="submit" class="btn btn-success">Save changes</button>
+                    <button type="submit" class="btn btn-success">Pieteikties</button>
                 </div>
             </form>
         </div>
     </div>
 </div>
-
 <script src="{{ asset('js/klients.js') }}?v={{ time() }}"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

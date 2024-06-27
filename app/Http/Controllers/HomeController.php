@@ -8,22 +8,28 @@ use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        // Fetch all pakalpojumi
-        $pakalpojumi = Pakalpojumi::all();
-
+        $query = Pakalpojumi::query();
+    
+        if ($request->has('sort_by')) {
+            $sortBy = $request->input('sort_by');
+            $sortOrder = $request->input('sort_order', 'asc');
+            $query->orderBy($sortBy, $sortOrder);
+        }
+    
+        $pakalpojumi = $query->paginate(10);
+    
         // Get unique kategorijas nosaukums
         $kategorijas = Pakalpojumi::select('kategorijas_nosaukums')->distinct()->pluck('kategorijas_nosaukums');
-
-        // 'adrese' data looks like this: street name, house number, city
-        // Get unique cities (last word of adrese column)
+    
+        // Get unique cities from the adrese column
         $adreses = Pakalpojumi::select('adrese')->distinct()->pluck('adrese');
         $pilsetas = $adreses->map(function ($adrese) {
             $parts = explode(',', $adrese);
             return trim(end($parts));
         })->unique();
-
+    
         // Check if the user is authenticated and redirect to the appropriate home page
         if (Auth::check()) {
             if (Auth::user()->is_professional) {

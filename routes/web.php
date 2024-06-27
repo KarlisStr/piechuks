@@ -54,8 +54,11 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/save-to-favorites/{id}', [FavoritesController::class, 'save'])->name('save.to.favorites');
 });
 Route::get('/klients', [KlientsController::class, 'index'])->name('klients.index');
-Route::get('/klients/pieteikumi', [KlientsController::class, 'pieteikumi'])->name('klients.klients_pieteikumi');
-
+Route::middleware(['auth'])->group(function () {
+    Route::get('/klients/pieteikumi', [KlientsController::class, 'pieteikumi'])->name('klients.pieteikumi');
+    Route::post('/klients/pieteikties', [KlientsController::class, 'pieteikties'])->name('klients.pieteikties');
+    Route::get('/pieteikums-details/{pieteikumsId}', [KlientsController::class, 'getPieteikumsDetails'])->name('klients.getPieteikumsDetails');
+});
 
 
 use App\Http\Controllers\FiltrationController;

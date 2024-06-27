@@ -1,3 +1,58 @@
+.pagination {
+    display: flex;
+    justify-content: center;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.25rem;
+}
+
+.page-item {
+    margin: 0 0.25rem; /* Add some margin to the left and right of each button */
+}
+
+.page-link {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    transition: all 0.3s;
+}
+
+.page-link:hover {
+    color: #0056b3;
+    background-color: #e9ecef;
+    border-color: #dee2e6;
+}
+
+.page-item.active .page-link {
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.page-item.disabled .page-link {
+    color: #6c757d;
+    pointer-events: none;
+    background-color: #fff;
+    border-color: #dee2e6;
+}
+
+.status-neapstiprinats {
+    color: orange !important; 
+}
+
+.status-apstiprinats {
+    color: darkgreen !important;
+}
+
+.status-noraidits {
+    color: darkred !important;
+}
+
+.selected-row {
+    background-color: rgb(219, 219, 219) !important;
+}
 span.sorted-asc,
 span.sorted-desc {
     text-decoration: underline;
@@ -15,8 +70,7 @@ span.sorted-desc::after {
 
 
 .table tbody tr.selected-row td {
-    background-color: rgb(159, 159, 159) !important;
-    color: white !important;
+    background-color: rgb(219, 219, 219) !important;
 }
 header{
     padding-top: 20px;

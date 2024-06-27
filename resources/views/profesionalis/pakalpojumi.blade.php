@@ -44,10 +44,10 @@ use Illuminate\Support\Str;
             <table class="table table-hover">
                 <thead>
                 <tr>
-                    <th scope="col">Apraksts</th>
-                    <th scope="col">Kategorija</th>
-                    <th scope="col">Lokācija</th>
-                    <th scope="col">Cena</th>
+                    <th scope="col"><span class="sortable">Apraksts</span></th>
+                    <th scope="col"><span class="sortable">Kategorija</span></th>
+                    <th scope="col"><span class="sortable">Lokācija</span></th>
+                    <th scope="col"><span class="sortable">Cena</span></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,6 +63,9 @@ use Illuminate\Support\Str;
             </table>
             <div class="d-flex flex-row-reverse">
                 <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addPakalpojumsModal">Pievienot jaunu pakalpojumu</button>
+            </div>
+            <div class="d-flex justify-content-center">
+                {{ $pakalpojumi->appends(request()->query())->links('vendor.pagination.bootstrap-4') }}
             </div>
         </div>
         <div class="col-md-6" id="serviceDetails">
@@ -127,40 +130,86 @@ use Illuminate\Support\Str;
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        const rows = document.querySelectorAll('.table tbody tr');
-        rows.forEach(row => {
-            row.addEventListener('click', function() {
-                const pakalpojumaId = this.dataset.pakalpojumaId;
-                console.log('Clicked row with pakalpojumaId:', pakalpojumaId);
-                fetchServiceDetails(pakalpojumaId);
-            });
-        });
+    document.querySelectorAll('span.sortable').forEach(span => span.addEventListener('click', function() {
+        const sortBy = this.dataset.sort;
+        const currentUrl = new URL(window.location.href);
+        let sortOrder = 'asc';
 
-        if (rows.length > 0) {
-            rows[0].click(); // Automatically click the first row to load its details
+        if (currentUrl.searchParams.get('sort_by') === sortBy && currentUrl.searchParams.get('sort_order') === 'asc') {
+            sortOrder = 'desc';
         }
 
-        document.getElementById('serviceDetails').addEventListener('click', function(event) {
-            if (event.target.classList.contains('btn-danger')) {
-                const pakalpojumaId = this.dataset.pakalpojumaId;
-                handleDelete(pakalpojumaId);
-            } else if (event.target.classList.contains('btn-success')) {
-                const pakalpojumaId = this.dataset.pakalpojumaId;
-                handleEdit(pakalpojumaId);
+        currentUrl.searchParams.set('sort_by', sortBy);
+        currentUrl.searchParams.set('sort_order', sortOrder);
+
+        window.location.href = currentUrl.toString();
+    }));
+            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+            document.querySelectorAll('span.sortable').forEach(span => span.addEventListener('click', function() {
+                const table = span.closest('table');
+                Array.from(table.querySelectorAll('tbody > tr'))
+                    .sort(comparer(Array.from(span.parentNode.parentNode.children).indexOf(span.parentNode), this.asc = !this.asc))
+                    .forEach(tr => table.querySelector('tbody').appendChild(tr));
+
+                table.querySelectorAll('span.sortable').forEach(span => {
+                    span.classList.remove('sorted-asc', 'sorted-desc');
+                });
+
+                span.classList.toggle('sorted-asc', this.asc);
+                span.classList.toggle('sorted-desc', !this.asc);
+            }));
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const rows = document.querySelectorAll('.table tbody tr');
+
+            function selectRow(row) {
+                // Remove the selected class from all rows
+                rows.forEach(r => r.classList.remove('selected-row'));
+                // Add the selected class to the clicked row
+                row.classList.add('selected-row');
+            }
+
+            rows.forEach(row => {
+                row.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                    console.log('Row clicked, fetching service details...');
+                    const pakalpojumaId = this.dataset.pakalpojumaId;
+                    selectRow(this); // Mark the row as selected
+                    fetchServiceDetails(pakalpojumaId);
+                });
+            });
+
+            if (rows.length > 0) {
+                rows[0].click(); // Automatically click the first row to load its details
             }
         });
-    });
 
-    function fetchServiceDetails(pakalpojumaId) {
-        fetch(`/service-details/${pakalpojumaId}`)
-            .then(response => response.json())
-            .then(data => {
-                console.log('Service details fetched:', data);
-                document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
-                document.getElementById('serviceDetails').dataset.pakalpojumaId = pakalpojumaId; // Store the ID for future reference
-            })
-            .catch(error => console.error('Error fetching service details:', error));
-    }
+        function fetchServiceDetails(pakalpojumaId) {
+            fetch(`/service-details/${pakalpojumaId}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
+                })
+                .catch(error => console.error('Error fetching service details:', error));
+        }
+
+function fetchServiceDetails(pakalpojumaId) {
+    fetch(`/service-details/${pakalpojumaId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Service details fetched:', data);
+            document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
+        })
+        .catch(error => console.error('Error fetching service details:', error));
+}
+
 
     function renderServiceDetails(data) {
         const images = data.images.map((image, index) => `

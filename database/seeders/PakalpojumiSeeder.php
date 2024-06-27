@@ -9,32 +9,61 @@ class PakalpojumiSeeder extends Seeder
 {
     public function run()
     {
-        // Add pakalpojumi for each profesionalis
-        Pakalpojumi::create([
-            'pakalpojuma_id' => 1,
-            'apraksts' => 'Plumbing Services',
-            'kategorijas_nosaukums' => 'Home Services',
-            'cena' => 50,
-            'adrese' => 'Baker Street 221B, Rīga',
-            'profesionalis_id' => '2',
-        ]);
 
         Pakalpojumi::create([
-            'pakalpojuma_id' => 2,
-            'apraksts' => 'Electrical Services',
-            'kategorijas_nosaukums' => 'Home Services',
-            'cena' => 60,
-            'adrese' => 'asd, Rīga',
+            'pakalpojuma_id' =>39,
+            'nosaukums' => 'Plumbing Services',
+            'apraksts' => 'Plumbing Services',
+            'kategorijas_nosaukums' => 'Mājas Pakalpojumi',
+            'cena' => 50,
+            'adrese' => 'Baker Street 221B, Rīga',
             'profesionalis_id' => '1',
         ]);
 
         Pakalpojumi::create([
-            'pakalpojuma_id' => 3,
-            'apraksts' => 'Cleaning Services',
-            'kategorijas_nosaukums' => 'Home Services',
-            'cena' => 40,
-            'adrese' => 'asd, Rīga',
-            'profesionalis_id' => '3',
+            'pakalpojuma_id' =>38,
+            'nosaukums' => 'Plumbing Services',
+            'apraksts' => 'Plumbing Services',
+            'kategorijas_nosaukums' => 'Mājas Pakalpojumi',
+            'cena' => 50,
+            'adrese' => 'Baker Street 221B, Rīga',
+            'profesionalis_id' => '1',
+        ]);
+        Pakalpojumi::create([
+            'pakalpojuma_id' =>37,
+            'nosaukums' => 'Plumbasding Services',
+            'apraksts' => 'Plumbing Services',
+            'kategorijas_nosaukums' => 'Mājas Pakalpojumi',
+            'cena' => 50,
+            'adrese' => 'Baker Street 221B, Rīga',
+            'profesionalis_id' => '1',
+        ]);
+        Pakalpojumi::create([
+            'pakalpojuma_id' =>36,
+            'nosaukums' => 'Plumbing Services',
+            'apraksts' => 'Plumbing Services',
+            'kategorijas_nosaukums' => 'Mājas Pakalpojumi',
+            'cena' => 50,
+            'adrese' => 'Baker Street 221B, Rīga',
+            'profesionalis_id' => '1',
+        ]);
+        Pakalpojumi::create([
+            'pakalpojuma_id' =>35,
+            'nosaukums' => 'Plumbing Services',
+            'apraksts' => 'Plumbing Services',
+            'kategorijas_nosaukums' => 'Mājas Pakalpojumi',
+            'cena' => 50,
+            'adrese' => 'Baker Street 221B, Rīga',
+            'profesionalis_id' => '1',
+        ]);
+        Pakalpojumi::create([
+            'pakalpojuma_id' =>34,
+            'nosaukums' => 'Plumbing Services',
+            'apraksts' => 'Plumbing Services',
+            'kategorijas_nosaukums' => 'Mājas Pakalpojumi',
+            'cena' => 50,
+            'adrese' => 'Baker Street 221B, Rīga',
+            'profesionalis_id' => '1',
         ]);
     }
 }
