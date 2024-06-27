@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class ProfileController extends Controller
         $profileData = $user->is_professional ? $user->profesionali : $user->klienti;
 
         $request->validate([
-            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            'profile_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
             'telefons' => 'nullable|string|max:50',
             'bankas_konts' => 'nullable|string|max:50',
         ]);
@@ -35,21 +36,21 @@ class ProfileController extends Controller
         }
 
         if ($request->hasFile('profile_image')) {
+            // Delete the old profile image if it exists
+            if ($user->profileImage) {
+                Storage::disk('public')->delete($user->profileImage->image_path);
+                $user->profileImage->delete();
+            }
+
+            // Save the new profile image
             $image = $request->file('profile_image');
             $path = $image->store('profile_images', 'public');
 
-            // Save the image path to the images table
             $imageModel = new Image();
             $imageModel->imageable_id = $user->id;
             $imageModel->imageable_type = 'App\Models\User';
             $imageModel->image_path = $path;
             $imageModel->save();
-
-            // Optionally, delete the old profile image if it exists
-            if ($user->profileImage) {
-                Storage::disk('public')->delete($user->profileImage->image_path);
-                $user->profileImage->delete();
-            }
         }
 
         return redirect()->route('profile.show')->with('success', 'Profile updated successfully!');

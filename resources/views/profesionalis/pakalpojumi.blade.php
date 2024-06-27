@@ -1,15 +1,6 @@
 @php
 use Illuminate\Support\Str;
 @endphp
-@if ($errors->any())
-    <div class="alert alert-danger">
-        <ul>
-            @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-            @endforeach
-        </ul>
-    </div>
-@endif
 <!doctype html>
 <html lang="en">
 <head>
@@ -64,7 +55,7 @@ use Illuminate\Support\Str;
                     <tr data-pakalpojuma-id="{{ $pakalpojums->pakalpojuma_id }}">
                         <td>{{ Str::limit($pakalpojums->apraksts, 50) }}</td>
                         <td>{{ $pakalpojums->kategorijas_nosaukums }}</td>
-                        <td>{{ optional($pakalpojums->lokacija)->adrese }}</td>
+                        <td>{{ $pakalpojums->adrese }}</td>
                         <td class="text-end">{{ $pakalpojums->cena }}</td>
                     </tr>
                 @endforeach
@@ -127,14 +118,14 @@ use Illuminate\Support\Str;
         </div>
     </div>
 </div>
-    
-<script>
 
+<script>
     document.addEventListener('DOMContentLoaded', function() {
         const rows = document.querySelectorAll('.table tbody tr');
         rows.forEach(row => {
             row.addEventListener('click', function() {
                 const pakalpojumaId = this.dataset.pakalpojumaId;
+                console.log('Clicked row with pakalpojumaId:', pakalpojumaId);
                 fetchServiceDetails(pakalpojumaId);
             });
         });
@@ -142,32 +133,105 @@ use Illuminate\Support\Str;
         if (rows.length > 0) {
             rows[0].click(); // Automatically click the first row to load its details
         }
+
+        document.getElementById('serviceDetails').addEventListener('click', function(event) {
+            if (event.target.classList.contains('btn-danger')) {
+                const pakalpojumaId = this.dataset.pakalpojumaId;
+                handleDelete(pakalpojumaId);
+            } else if (event.target.classList.contains('btn-success')) {
+                const pakalpojumaId = this.dataset.pakalpojumaId;
+                handleEdit(pakalpojumaId);
+            }
+        });
     });
 
     function fetchServiceDetails(pakalpojumaId) {
         fetch(`/service-details/${pakalpojumaId}`)
             .then(response => response.json())
             .then(data => {
+                console.log('Service details fetched:', data);
                 document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
-            });
+                document.getElementById('serviceDetails').dataset.pakalpojumaId = pakalpojumaId; // Store the ID for future reference
+            })
+            .catch(error => console.error('Error fetching service details:', error));
     }
 
     function renderServiceDetails(data) {
+        const images = data.images.map((image, index) => `
+            <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                <img class="d-block w-100" src="${image.url}" alt="Service Image">
+            </div>`
+        ).join('');
+     
         return `
             <div class="service-details">
-                <h2>${data.title}</h2>
-                <img src="${data.image || 'images/default-profile.png'}" alt="Service Image" class="service-image">
-                <p>${data.description}</p>
-                <div class="profesionalis-details">
-                    <img src="${data.profesionalis.profileImage || 'images/default-profile.png'}" alt="Profile Image" class="profile-image">
-                    <p>${data.profesionalis.name}</p>
+                <div class="profesionali-details">
+                    <div class="row align-items-center">
+                        <div class="col-auto">
+                            <img src="${data.professional ? data.professional.profileImage : 'images/default-profile.png'}" alt="Profile Image" class="profile-image rounded-circle" style="width: 50px; height: 50px;">
+                        </div>
+                        <div class="col">
+                            <p>${data.professional ? data.professional.name : 'No professional assigned'}</p>
+                        </div>
+                    </div>
                 </div>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="padding-top:20px; width: 300px; height: 200px; overflow: hidden;">
+                                <div class="carousel-inner">
+                                    ${images}
+                                </div>
+                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <p style="padding-top: 10px; font-weight: bold;"> ${data.title}</p>
+                             <p style="padding-top: 10px; font-weight: bold;">Kategorija: ${data.category}</p>
+                            <p style="padding-top: 10px; font-weight: bold;">Lokācija: ${data.address}</p>
+                            <p style="padding-top: 10px; font-weight: bold;">Cena: ${data.price} €</p>
+                        </div>
+                    </div>
+                </div>
+                <p style="padding-top: 10px; font-weight: bold;">Par pakalpojumu:</p>
+                <p>${data.description}</p>
                 <div class="action-buttons">
-                    <button type="button" class="btn btn-success">Pieteikties</button>
-                    <button type="button" class="btn btn-secondary">Saglabāt</button>
+                    <button type="button" class="btn btn-danger">Dzēst</button>
+                    <button type="button" class="btn btn-success">Rediģēt</button>
                 </div>
             </div>
         `;
+    }
+
+    function handleDelete(pakalpojumaId) {
+        if (confirm('Vai tiešām vēlaties dzēst šo pakalpojumu?')) {
+            fetch(`/delete-service/${pakalpojumaId}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Service deleted:', pakalpojumaId);
+                    window.location.reload(); // Reload the page to reflect the changes
+                } else {
+                    console.error('Failed to delete service:', pakalpojumaId);
+                }
+            })
+            .catch(error => console.error('Error deleting service:', error));
+        }
+    }
+
+    function handleEdit(pakalpojumaId) {
+        window.location.href = `/edit-service/${pakalpojumaId}`;
     }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

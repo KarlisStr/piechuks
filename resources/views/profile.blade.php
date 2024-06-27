@@ -54,7 +54,7 @@
         </div>
     </div>
     <header class="text-center">
-        <h4 class="text-success">Kad pat tavi draugi saka, ka Tev vajag profesionālu palīdzību!</h1>
+        <h4 class="text-success">Kad pat tavi draugi saka, ka Tev vajag profesionālu palīdzību!</h4>
     </header>
     <div class="container">
         <div class="row">
@@ -89,9 +89,9 @@
                         <label for="profile_image" class="form-label">Profile Image</label>
                         <input type="file" class="form-control" id="profile_image" name="profile_image">
                         @if($user->profileImage)
-                        <img src="{{ Auth::user()->profileImage ? asset('storage/' . Auth::user()->profileImage->image_path) : asset('images/default-profile.png') }}" class="mt-2" width="100" height="100" alt="Profile Image">
+                            <img src="{{ asset('storage/' . $user->profileImage->image_path) }}" class="mt-2" width="100" height="100" alt="Profile Image">
                         @else
-                            <img src="images/default-profile.png" class="mt-2" width="100" height="100" alt="Default Profile Image">
+                            <img src="{{ asset('images/default-profile.png') }}" class="mt-2" width="100" height="100" alt="Default Profile Image">
                         @endif
                     </div>
                     <div class="d-flex flex-row-reverse">
