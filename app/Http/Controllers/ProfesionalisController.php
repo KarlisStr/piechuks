@@ -47,8 +47,11 @@ class ProfesionalisController extends Controller
             'apraksts' => 'required|string|max:200',
             'kategorijas_nosaukums' => 'required|string|max:50',
             'cena' => 'required|numeric|min:0',
-            'adrese' => 'required|string|max:255',
+            'iela_majasnr' => 'required|string|max:255',
+            'pilseta' => 'required|string|max:255',
         ]);
+
+        $adrese = $request->input('iela_majasnr') . ', ' . $request->input('pilseta');
 
         // Log request data
         Log::info('Request data:', $request->all());
@@ -74,7 +77,7 @@ class ProfesionalisController extends Controller
             'apraksts' => $request->apraksts,
             'kategorijas_nosaukums' => $request->kategorijas_nosaukums,
             'cena' => $request->cena,
-            'adrese' => $request->adrese,
+            'adrese' => $adrese,
             'profesionalis_id' => Auth::user()->id,
         ]);
 

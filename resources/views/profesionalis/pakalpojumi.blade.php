@@ -101,9 +101,15 @@ use Illuminate\Support\Str;
                         <label for="cena" class="form-label">Cena</label>
                         <input type="number" step="0.01" class="form-control" id="cena" name="cena" required>
                     </div>
-                    <div class="mb-3">
-                        <label for="adrese" class="form-label">Adrese</label>
-                        <input type="text" class="form-control" id="adrese" name="adrese" required>
+                    <div class="mb-3 d-flex">
+                        <div class="me-2 flex-grow-1">
+                            <label for="iela_majasnr" class="form-label">Adrese</label>
+                            <input type="text" class="form-control" id="iela_majasnr" name="iela_majasnr" placeholder="Upes iela 1" required>
+                        </div>
+                        <div class="flex-grow-1">
+                            <label for="iela_majasnr" class="form-label">Pilsēta</label>
+                            <input type="text" class="form-control" id="pilseta" placeholder="Rīga" name="pilseta" required>
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="images" class="form-label">Attēli</label>
