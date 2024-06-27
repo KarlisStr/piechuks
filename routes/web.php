@@ -40,8 +40,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/profesionalis', [ProfesionalisController::class, 'index'])->name('profesionalis.index');
     Route::get('/profesionalis/pieteikumi', [ProfesionalisController::class, 'pieteikumi'])->name('profesionalis.pieteikumi');
     Route::get('/profesionalis/pakalpojumi', [ProfesionalisController::class, 'pakalpojumi'])->name('profesionalis.pakalpojumi');
+    Route::delete('/delete-service/{pakalpojumaId}', [ProfesionalisController::class, 'deletePakalpojums'])->name('profesionalis.pakalpojumi.delete');
+    Route::put('/edit-service/{pakalpojumaId}', [ProfesionalisController::class, 'updatePakalpojums'])->name('profesionalis.pakalpojumi.update');
     Route::post('/profesionalis/pakalpojumi/add', [ProfesionalisController::class, 'addPakalpojums'])->name('profesionalis.pakalpojumi.add');
+    Route::delete('/delete-image/{imageId}', [ProfesionalisController::class, 'deleteImage'])->name('deleteImage');
 });
+Route::put('/pieteikums-status/{pieteikumsId}', [ProfesionalisController::class, 'updatePieteikumsStatus']);
+
 
 // Ensure you have an Auth::routes() call somewhere in your routes file to include default auth routes
 Auth::routes();

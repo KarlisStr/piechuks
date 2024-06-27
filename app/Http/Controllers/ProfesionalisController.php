@@ -110,10 +110,105 @@ class ProfesionalisController extends Controller
                 Log::info('Image uploaded:', ['path' => $path]);
             }
         }
+        
 
         // Log successful creation of service
         Log::info('Service created successfully:', ['service' => $pakalpojums]);
 
         return redirect()->route('profesionalis.pakalpojumi')->with('success', 'Pakalpojums added successfully!');
     }
+    public function updatePieteikumsStatus(Request $request, $pieteikumsId)
+    {
+        $pieteikums = Pieteikumi::findOrFail($pieteikumsId);
+        $pieteikums->statuss = $request->input('status');
+        $pieteikums->save();
+    
+        return response()->json(['message' => 'Pieteikums status updated successfully']);
+    }
+    public function deletePakalpojums($pakalpojumaId)
+    {
+        $pakalpojums = Pakalpojumi::findOrFail($pakalpojumaId);
+    
+        // Delete all related pieteikumi
+        Pieteikumi::where('pakalpojuma_id', $pakalpojumaId)->delete();
+    
+        // Delete the pakalpojums
+        $pakalpojums->delete();
+    
+        return response()->json(['message' => 'Pakalpojums deleted successfully.']);
+    }
+    
+    public function updatePakalpojums(Request $request, $pakalpojumaId)
+    {
+        $request->validate([
+            'nosaukums' => 'required|string|max:255',
+            'apraksts' => 'required|string|max:200',
+            'kategorijas_nosaukums' => 'required|string|max:50',
+            'cena' => 'required|numeric|min:0',
+            'iela_majasnr' => 'required|string|max:255',
+            'pilseta' => 'required|string|max:255',
+        ]);
+    
+        $adrese = $request->input('iela_majasnr') . ', ' . $request->input('pilseta');
+    
+        $pakalpojums = Pakalpojumi::findOrFail($pakalpojumaId);
+        $pakalpojums->update([
+            'nosaukums' => $request->nosaukums,
+            'apraksts' => $request->apraksts,
+            'kategorijas_nosaukums' => $request->kategorijas_nosaukums,
+            'cena' => $request->cena,
+            'adrese' => $adrese,
+        ]);
+    
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $path = $image->store('images', 'public');
+                $pakalpojums->images()->create(['image_path' => $path]);
+            }
+        }
+    
+        return redirect()->route('profesionalis.pakalpojumi')->with('success', 'Pakalpojums updated successfully!');
+    }
+    public function deleteImage($imageId)
+{
+    $image = PakalpojumsImage::findOrFail($imageId);
+    $path = $image->image_path;
+
+    // Delete the image file from storage
+    if (Storage::disk('public')->exists($path)) {
+        Storage::disk('public')->delete($path);
+    }
+
+    // Delete the image record from the database
+    $image->delete();
+
+    return response()->json(['message' => 'Image deleted successfully.']);
+}
+public function getPakalpojumsDetails($pakalpojumsId)
+{
+    $pakalpojums = Pakalpojumi::with('images', 'profesionalis')->findOrFail($pakalpojumsId);
+    Log::info('Pakalpojums details:', $pakalpojums->toArray());
+    $images = $pakalpojums->images->map(function($image) {
+        return [
+            'id' => $image->id,
+            'url' => asset('storage/' . $image->image_path)
+        ];
+    });
+    Log::info('Pakalpojums images:', $images->toArray());
+
+    return response()->json([
+        'title' => $pakalpojums->nosaukums,
+        'description' => $pakalpojums->apraksts,
+        'category' => $pakalpojums->kategorijas_nosaukums,
+        'price' => $pakalpojums->cena,
+        'address' => $pakalpojums->adrese,
+        'professional' => [
+            'name' => $pakalpojums->profesionalis->name ?? 'No professional assigned',
+            'profileImage' => $pakalpojums->profesionalis->profileImage ? asset('storage/' . $pakalpojums->profesionalis->profileImage->image_path) : asset('images/default-profile.png'),
+            'phone' => $pakalpojums->profesionalis->telefons ?? 'No phone number available'
+        ],
+        'images' => $images
+    ]);
+}
+    
 }

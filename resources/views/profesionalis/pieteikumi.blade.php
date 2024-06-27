@@ -184,7 +184,16 @@ document.addEventListener('DOMContentLoaded', function() {
     if (rows.length > 0) {
         // Automatically click the first row to load its details
         rows[0].click();
+
     }
+    document.getElementById('serviceDetails').addEventListener('click', function(event) {
+        const pieteikumaId = this.dataset.pieteikumaId;
+        if (event.target.classList.contains('btn-danger')) {
+            handleStatusChange(pieteikumaId, 2); // Noraidīt
+        } else if (event.target.classList.contains('btn-success')) {
+            handleStatusChange(pieteikumaId, 1); // Apstiprināt
+        }
+    });
 
     document.querySelectorAll('.sortable').forEach(span => {
         span.addEventListener('click', function() {
@@ -263,12 +272,33 @@ function renderServiceDetails(data) {
             <p style="padding-top: 10px; font-weight: bold;">Pieteikuma teksts:</p>
             <p>${data.description}</p>
             <div class="action-buttons">
-                <button type="button" class="btn btn-danger">Dzēst</button>
-                <button type="button" class="btn btn-success">Rediģēt</button>
+                <button type="button" class="btn btn-danger">Noraidīt</button>
+                <button type="button" class="btn btn-success">Apstiprināt</button>
             </div>
         </div>
     `;
 }
+function handleStatusChange(pieteikumaId, status) {
+    console.log('Changing status for pieteikums:', pieteikumaId, 'to status:', status);
+
+    fetch(`/pieteikums-status/${pieteikumaId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Pieteikums status updated:', pieteikumaId);
+            window.location.reload(); // Reload the page to reflect the changes
+        } else {
+            console.error('Failed to update pieteikums status:', pieteikumaId);
+        }
+    })
+    .catch(error => console.error('Error updating pieteikums status:', error));
+}   
 
 function formatDateTime(dateTimeString) {
     const dateTime = new Date(dateTimeString);

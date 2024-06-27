@@ -1,11 +1,9 @@
-@php
-use Illuminate\Support\Str;
-@endphp
 <!doctype html>
 <html lang="en">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Profesionalis Pakalpojumi</title>
     <link rel="stylesheet" href="{{ asset('css/custom.css') }}?v={{ time() }}">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -78,7 +76,7 @@ use Illuminate\Support\Str;
 <div class="modal fade" id="addPakalpojumsModal" tabindex="-1" aria-labelledby="addPakalpojumsModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form method="POST" action="{{ route('profesionalis.pakalpojumi.add') }}" enctype="multipart/form-data">
+            <form id="addPakalpojumsForm" method="POST" action="{{ route('profesionalis.pakalpojumi.add') }}" enctype="multipart/form-data">
                 @csrf
                 <div class="modal-header">
                     <h5 class="modal-title" id="addPakalpojumsModalLabel">Pievienot jaunu pakalpojumu</h5>
@@ -128,77 +126,103 @@ use Illuminate\Support\Str;
     </div>
 </div>
 
+<!-- Edit Pakalpojums Modal -->
+<div class="modal fade" id="editPakalpojumsModal" tabindex="-1" aria-labelledby="editPakalpojumsModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="editPakalpojumsForm" method="POST" action="" enctype="multipart/form-data">
+                @csrf
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editPakalpojumsModalLabel">Rediģēt pakalpojumu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="edit_nosaukums" class="form-label">Nosaukums</label>
+                        <input type="text" class="form-control" id="edit_nosaukums" name="nosaukums" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_apraksts" class="form-label">Apraksts</label>
+                        <input type="text" class="form-control" id="edit_apraksts" name="apraksts" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_kategorijas_nosaukums" class="form-label">Kategorija</label>
+                        <select class="form-select" id="edit_kategorijas_nosaukums" name="kategorijas_nosaukums" required>
+                            <option value="Mājas Pakalpojumi">Mājas Pakalpojumi</option>
+                            <option value="IT Pakalpojumi">IT Pakalpojumi</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="edit_cena" class="form-label">Cena</label>
+                        <input type="number" step="0.01" class="form-control" id="edit_cena" name="cena" required>
+                    </div>
+                    <div class="mb-3 d-flex">
+                        <div class="me-2 flex-grow-1">
+                            <label for="edit_iela_majasnr" class="form-label">Adrese</label>
+                            <input type="text" class="form-control" id="edit_iela_majasnr" name="iela_majasnr" placeholder="Upes iela 1" required>
+                        </div>
+                        <div class="flex-grow-1">
+                            <label for="edit_pilseta" class="form-label">Pilsēta</label>
+                            <input type="text" class="form-control" id="edit_pilseta" placeholder="Rīga" name="pilseta" required>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="images" class="form-label">Attēli</label>
+                        <input type="file" class="form-control" id="images" name="images[]" multiple>
+                    </div>
+                    <div id="currentImages" class="mb-3">
+                        <!-- Current images will be displayed here -->
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Aizvērt</button>
+                    <button type="submit" class="btn btn-success">Saglabāt izmaiņas</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    document.querySelectorAll('span.sortable').forEach(span => span.addEventListener('click', function() {
-        const sortBy = this.dataset.sort;
-        const currentUrl = new URL(window.location.href);
-        let sortOrder = 'asc';
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.table tbody tr');
+    let selectedRow = null;
 
-        if (currentUrl.searchParams.get('sort_by') === sortBy && currentUrl.searchParams.get('sort_order') === 'asc') {
-            sortOrder = 'desc';
-        }
+    rows.forEach(row => {
+        row.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            console.log('Row clicked, fetching service details...');
+            const pakalpojumaId = this.dataset.pakalpojumaId;
 
-        currentUrl.searchParams.set('sort_by', sortBy);
-        currentUrl.searchParams.set('sort_order', sortOrder);
-
-        window.location.href = currentUrl.toString();
-    }));
-            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
-
-            const comparer = (idx, asc) => (a, b) => ((v1, v2) =>
-                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
-            )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
-
-            document.querySelectorAll('span.sortable').forEach(span => span.addEventListener('click', function() {
-                const table = span.closest('table');
-                Array.from(table.querySelectorAll('tbody > tr'))
-                    .sort(comparer(Array.from(span.parentNode.parentNode.children).indexOf(span.parentNode), this.asc = !this.asc))
-                    .forEach(tr => table.querySelector('tbody').appendChild(tr));
-
-                table.querySelectorAll('span.sortable').forEach(span => {
-                    span.classList.remove('sorted-asc', 'sorted-desc');
-                });
-
-                span.classList.toggle('sorted-asc', this.asc);
-                span.classList.toggle('sorted-desc', !this.asc);
-            }));
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('.table tbody tr');
-
-            function selectRow(row) {
-                // Remove the selected class from all rows
-                rows.forEach(r => r.classList.remove('selected-row'));
-                // Add the selected class to the clicked row
-                row.classList.add('selected-row');
+            // Remove the 'selected-row' class from the previously selected row
+            if (selectedRow) {
+                selectedRow.classList.remove('selected-row');
             }
 
-            rows.forEach(row => {
-                row.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    event.stopPropagation();
-                    console.log('Row clicked, fetching service details...');
-                    const pakalpojumaId = this.dataset.pakalpojumaId;
-                    selectRow(this); // Mark the row as selected
-                    fetchServiceDetails(pakalpojumaId);
-                });
-            });
+            // Add the 'selected-row' class to the clicked row
+            this.classList.add('selected-row');
+            selectedRow = this;
 
-            if (rows.length > 0) {
-                rows[0].click(); // Automatically click the first row to load its details
-            }
+            fetchServiceDetails(pakalpojumaId);
         });
+    });
 
-        function fetchServiceDetails(pakalpojumaId) {
-            fetch(`/service-details/${pakalpojumaId}`)
-                .then(response => response.json())
-                .then(data => {
-                    document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
-                })
-                .catch(error => console.error('Error fetching service details:', error));
+    if (rows.length > 0) {
+        // Automatically click the first row to load its details
+        rows[0].click();
+    }
+
+    document.getElementById('serviceDetails').addEventListener('click', function(event) {
+        if (event.target.classList.contains('btn-danger')) {
+            const pakalpojumaId = document.getElementById('serviceDetails').dataset.pakalpojumaId;
+            handleDelete(pakalpojumaId);
+        } else if (event.target.classList.contains('btn-success')) {
+            const pakalpojumaId = document.getElementById('serviceDetails').dataset.pakalpojumaId;
+            handleEdit(pakalpojumaId);
         }
+    });
+});
 
 function fetchServiceDetails(pakalpojumaId) {
     fetch(`/service-details/${pakalpojumaId}`)
@@ -206,88 +230,141 @@ function fetchServiceDetails(pakalpojumaId) {
         .then(data => {
             console.log('Service details fetched:', data);
             document.getElementById('serviceDetails').innerHTML = renderServiceDetails(data);
+            document.getElementById('serviceDetails').dataset.pakalpojumaId = pakalpojumaId; // Store the ID for future reference
         })
         .catch(error => console.error('Error fetching service details:', error));
 }
 
-
-    function renderServiceDetails(data) {
-        const images = data.images.map((image, index) => `
-            <div class="carousel-item ${index === 0 ? 'active' : ''}">
-                <img class="d-block w-100" src="${image.url}" alt="Service Image">
-            </div>`
-        ).join('');
-     
-        return `
-            <div class="service-details">
-                <div class="profesionali-details">
-                    <div class="row align-items-center">
-                        <div class="col-auto">
-                            <img src="${data.professional ? data.professional.profileImage : 'images/default-profile.png'}" alt="Profile Image" class="profile-image rounded-circle" style="width: 50px; height: 50px;">
-                        </div>
-                        <div class="col">
-                            <p>${data.professional ? data.professional.name : 'No professional assigned'}</p>
-                        </div>
+function renderServiceDetails(data) {
+    const images = data.images.map((image, index) => `
+        <div class="carousel-item ${index === 0 ? 'active' : ''}">
+            <img class="d-block w-100" src="${image.url}" alt="Service Image">
+        </div>`
+    ).join('');
+ 
+    return `
+        <div class="service-details">
+            <div class="profesionali-details">
+                <div class="row align-items-center">
+                    <div class="col-auto">
+                        <img src="${data.professional ? data.professional.profileImage : 'images/default-profile.png'}" alt="Profile Image" class="profile-image rounded-circle" style="width: 50px; height: 50px;">
                     </div>
-                </div>
-                <div class="container">
-                    <div class="row">
-                        <div class="col">
-                            <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="padding-top:20px; width: 300px; height: 200px; overflow: hidden;">
-                                <div class="carousel-inner">
-                                    ${images}
-                                </div>
-                                <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
-                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Previous</span>
-                                </button>
-                                <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
-                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                                    <span class="visually-hidden">Next</span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="col">
-                            <p style="padding-top: 10px; font-weight: bold;"> ${data.title}</p>
-                             <p style="padding-top: 10px; font-weight: bold;">Kategorija: ${data.category}</p>
-                            <p style="padding-top: 10px; font-weight: bold;">Lokācija: ${data.address}</p>
-                            <p style="padding-top: 10px; font-weight: bold;">Cena: ${data.price} €</p>
-                        </div>
+                    <div class="col">
+                        <p>${data.professional ? data.professional.name : 'No professional assigned'}</p>
                     </div>
-                </div>
-                <p style="padding-top: 10px; font-weight: bold;">Par pakalpojumu:</p>
-                <p>${data.description}</p>
-                <div class="action-buttons">
-                    <button type="button" class="btn btn-danger">Dzēst</button>
-                    <button type="button" class="btn btn-success">Rediģēt</button>
                 </div>
             </div>
-        `;
-    }
+            <div class="container">
+                <div class="row">
+                    <div class="col">
+                        <div id="carouselExampleControls" class="carousel slide" data-bs-ride="carousel" style="padding-top:20px; width: 300px; height: 200px; overflow: hidden;">
+                            <div class="carousel-inner">
+                                ${images}
+                            </div>
+                            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="prev">
+                                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Previous</span>
+                            </button>
+                            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleControls" data-bs-slide="next">
+                                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                <span class="visually-hidden">Next</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <p style="padding-top: 10px; font-weight: bold;">${data.title}</p>
+                        <p style="padding-top: 10px; font-weight: bold;">Kategorija: ${data.category}</p>
+                        <p style="padding-top: 10px; font-weight: bold;">Lokācija: ${data.address}</p>
+                        <p style="padding-top: 10px; font-weight: bold;">Cena: ${data.price} €</p>
+                    </div>
+                </div>
+            </div>
+            <p style="padding-top: 10px; font-weight: bold;">Par pakalpojumu:</p>
+            <p>${data.description}</p>
+            <div class="action-buttons">
+                <button type="button" class="btn btn-danger">Dzēst</button>
+                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editPakalpojumsModal">Rediģēt</button>
+            </div>
+        </div>
+    `;
+}
 
-    function handleDelete(pakalpojumaId) {
-        if (confirm('Vai tiešām vēlaties dzēst šo pakalpojumu?')) {
-            fetch(`/delete-service/${pakalpojumaId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Service deleted:', pakalpojumaId);
-                    window.location.reload(); // Reload the page to reflect the changes
-                } else {
-                    console.error('Failed to delete service:', pakalpojumaId);
-                }
-            })
-            .catch(error => console.error('Error deleting service:', error));
-        }
+function handleDelete(pakalpojumaId) {
+    if (confirm('Vai tiešām vēlaties dzēst šo pakalpojumu?')) {
+        fetch(`/delete-service/${pakalpojumaId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Service deleted:', pakalpojumaId);
+                window.location.reload(); // Reload the page to reflect the changes
+            } else {
+                console.error('Failed to delete service:', pakalpojumaId);
+            }
+        })
+        .catch(error => console.error('Error deleting service:', error));
     }
+}
 
-    function handleEdit(pakalpojumaId) {
-        window.location.href = `/edit-service/${pakalpojumaId}`;
+function handleEdit(pakalpojumaId) {
+    fetch(`/service-details/${pakalpojumaId}`)
+        .then(response => response.json())
+        .then(data => {
+            console.log('Editing service:', data);
+            document.getElementById('editPakalpojumsForm').action = `/edit-service/${pakalpojumaId}`;
+            document.getElementById('edit_nosaukums').value = data.title;
+            document.getElementById('edit_apraksts').value = data.description;
+            document.getElementById('edit_kategorijas_nosaukums').value = data.category;
+            document.getElementById('edit_cena').value = data.price;
+            const addressParts = data.address.split(', ');
+            document.getElementById('edit_iela_majasnr').value = addressParts[0];
+            document.getElementById('edit_pilseta').value = addressParts[1];
+            
+            // Display current images
+            const imagesContainer = document.getElementById('currentImages');
+            imagesContainer.innerHTML = data.images.map(image => `
+                <div class="image-container">
+                    <img src="${image.url}" alt="Service Image" style="width: 100px; height: 100px;">
+                    <button type="button" class="btn btn-danger btn-sm delete-image-btn" data-image-id="${image.id}">Dzēst</button>
+                </div>
+            `).join('');
+            
+            // Add event listeners to delete buttons
+            document.querySelectorAll('.delete-image-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const imageId = this.getAttribute('data-image-id');
+                    console.log('Deleting image with ID:', imageId); // Log the image ID
+                    deleteImage(imageId);
+                });
+            });
+        })
+        .catch(error => console.error('Error fetching service details for editing:', error));
+}
+
+function deleteImage(imageId) {
+    if (confirm('Vai tiešām vēlaties dzēst šo attēlu?')) {
+        fetch(`/delete-image/${imageId}`, {
+            method: 'DELETE',
+            headers: {
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            }
+        })
+        .then(response => {
+            if (response.ok) {
+                console.log('Image deleted:', imageId);
+                document.querySelector(`.delete-image-btn[data-image-id="${imageId}"]`).closest('.image-container').remove();
+            } else {
+                console.error('Failed to delete image:', imageId);
+            }
+        })
+        .catch(error => console.error('Error deleting image:', error));
     }
+}
+
+
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>

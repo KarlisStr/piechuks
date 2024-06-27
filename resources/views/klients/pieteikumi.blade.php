@@ -118,6 +118,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // Automatically click the first row to load its details
         rows[0].click();
     }
+    document.getElementById('serviceDetails').addEventListener('click', function(event) {
+        const pieteikumaId = this.dataset.pieteikumaId;
+        if (event.target.classList.contains('btn-danger')) {
+            handleStatusChange(pieteikumaId, 2); // Noraidīt
+        } else if (event.target.classList.contains('btn-success')) {
+            handleStatusChange(pieteikumaId, 1); // Apstiprināt
+        }
+    });
 
         document.getElementById('serviceDetails').addEventListener('click', function(event) {
             if (event.target.classList.contains('btn-danger')) {
@@ -205,29 +213,25 @@ function formatDateTime(dateTimeString) {
     return `${hours}:${minutes}  ${month}-${day}`;
 }
 
-    function handleDelete(pieteikumaId) {
-        if (confirm('Vai tiešām vēlaties dzēst šo pieteikumu?')) {
-            fetch(`/delete-pieteikums/${pieteikumaId}`, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => {
-                if (response.ok) {
-                    console.log('Pieteikums deleted:', pieteikumaId);
-                    window.location.reload(); // Reload the page to reflect the changes
-                } else {
-                    console.error('Failed to delete pieteikums:', pieteikumaId);
-                }
-            })
-            .catch(error => console.error('Error deleting pieteikums:', error));
+function handleStatusChange(pieteikumaId, status) {
+    fetch(`/pieteikums-status/${pieteikumaId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ status: status })
+    })
+    .then(response => {
+        if (response.ok) {
+            console.log('Pieteikums status updated:', pieteikumaId);
+            window.location.reload(); // Reload the page to reflect the changes
+        } else {
+            console.error('Failed to update pieteikums status:', pieteikumaId);
         }
-    }
-
-    function handleEdit(pieteikumaId) {
-        window.location
-    }
+    })
+    .catch(error => console.error('Error updating pieteikums status:', error));
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
